@@ -1,0 +1,14 @@
+@import '~antd/dist/antd.css';
+
+.App{
+  min-height: 100vh;
+}
+
+.ant-form-item{
+  max-width: 640px;
+}
+
+.ant-input-number{
+  max-width: 300px;
+  width: 100%;
+}

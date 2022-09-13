@@ -8,3 +8,8 @@ CREATE TABLE countries(
     flag_image_path varchar(255),
     country_phone_code varchar(255)
 );
+
+ALTER TABLE countries
+ADD created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ADD updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ADD completed_at TIMESTAMPTZ;

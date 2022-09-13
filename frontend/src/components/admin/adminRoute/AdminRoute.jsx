@@ -6,12 +6,13 @@ import {
 } from "@ant-design/icons";
 import React, { useState } from "react";
 import './AdminRoute.scss'
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
 function AdminRoute() {
   const [collapsed, setCollapsed] = useState(false);
+  let navigate = useNavigate();
 
   return (
     <Layout>
@@ -29,6 +30,7 @@ function AdminRoute() {
               key: "1",
               icon: <FlagOutlined />,
               label: "ქვეყნები",
+              onClick: ()=>navigate('../countries')
             }
           ]}
         ></Menu>

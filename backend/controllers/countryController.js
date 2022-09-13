@@ -5,7 +5,7 @@ const pool = require("../database/db");
 // @route   GET /api/countries
 // @access  Private
 const getCountries = async (req, res) => {
-  const countries = await pool.query("SELECT * from countries");
+  const countries = await pool.query("SELECT * from countries ORDER BY created_at");
 
   res.status(200).json({
     status: "success",
