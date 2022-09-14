@@ -1,41 +1,56 @@
-import { Button, Form, Input, InputNumber, Space, Tabs, Upload } from "antd";
-import { UploadOutlined,ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, message, Space, Upload } from "antd";
+import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-
-const items = new Array(3).fill(null).map((_, i) => {
-  const id = String(i + 1);
-  return {
-    label: `Tab ${id}`,
-    key: id,
-    children: `Content of Tab Pane ${id}`,
-    style:
-      i === 0
-        ? {
-            height: 200,
-          }
-        : undefined,
-  };
-});
-
-const normFile = (e) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-
-  return e?.fileList;
-};
+import axios from "axios";
+import { useState } from "react";
 
 function AddCountry() {
   const [form] = Form.useForm();
   let navigate = useNavigate();
-
-  const imageSet = ({ file, onSuccess }) => {
-    form.setFieldValue("flag_image", file);
-    onSuccess("ok");
-  };
+  const [img, setImg] = useState();
+  const [errors, setErrors] = useState({});
 
   const onFinish = (values) => {
-    console.log(values);
+    values.flag_image_path = img;
+    delete values.upload;
+
+    axios.post("/api/countries", values).then((res) => {
+      if (res?.data?.status === "success") {
+        navigate("/countries");
+      } else {
+        setErrors(res?.data?.errors);
+      }
+    });
+  };
+
+  const removeImage = () => {
+    axios.delete(`/api/images`, { params: { image_path: img } }).then((res) => {
+      if (res?.data?.status === "success") {
+        setImg(null);
+      }
+    });
+  };
+
+  const beforeUpload = (file) => {
+    if (img) {
+      removeImage();
+    }
+    if (
+      file.type === "image/jpeg" ||
+      file.type === "image/jpg" ||
+      file.type === "image/png" ||
+      file.type === "image/svg" ||
+      file.type === "image/svg+xml"
+    ) {
+      if (file.size / 1024 / 1024 < 0.5) {
+        return true;
+      }
+      message.error("სურათი უნდა იყოს 500kb ზომის");
+      return false;
+    } else {
+      message.error("სურათ უნდა იყოს .jpeg, .jpg, .png ან .svg გაფართოების");
+      return false;
+    }
   };
 
   return (
@@ -45,49 +60,54 @@ function AddCountry() {
         onClick={() => navigate("/countries")}
       />
       <Form layout="vertical" form={form} onFinish={onFinish}>
-        <Tabs
-          defaultActiveKey="1"
-          items={[
-            {
-              label: `ქართული`,
-              key: "1",
-              children: (
-                <Form.Item label="სახელი" name={"name_ka"}>
-                  <Input placeholder="შეიყვანე ქვეყნის სახელი" />
-                </Form.Item>
-              ),
-            },
-            {
-              label: `ინგლისური`,
-              key: "2",
-              children: (
-                <Form.Item label="სახელი" name={"name_en"}>
-                  <Input placeholder="შეიყვანე ქვეყნის სახელი" />
-                </Form.Item>
-              ),
-            },
-            {
-              label: `რუსული`,
-              key: "3",
-              children: (
-                <Form.Item label="სახელი" name={"name_ru"}>
-                  <Input placeholder="შეიყვანე ქვეყნის სახელი" />
-                </Form.Item>
-              ),
-            },
-          ]}
-        />
         <Form.Item
-          name="upload"
-          label="Upload"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
+          label="ქვეყნის დასახელება ქართულად*"
+          name={"name_ka"}
+          validateStatus={errors?.name_ka && "error"}
+          help={errors?.name_ka}
         >
-          <Upload name="logo" listType="picture" customRequest={imageSet}>
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
+          <Input placeholder="შეიყვანე ქვეყნის დასახელება" />
+        </Form.Item>
+        <Form.Item
+          label="ქვეყნის დასახელება ინგლისურად*"
+          name={"name_en"}
+          validateStatus={errors?.name_en && "error"}
+          help={errors?.name_en}
+        >
+          <Input placeholder="შეიყვანე ქვეყნის დასახელება" />
+        </Form.Item>
+        <Form.Item
+          label="ქვეყნის დასახელება რუსულად*"
+          name={"name_ru"}
+          validateStatus={errors?.name_ru && "error"}
+          help={errors?.name_ru}
+        >
+          <Input placeholder="შეიყვანე ქვეყნის დასახელება" />
+        </Form.Item>
+        <Form.Item
+          label="ქვეყნის დასახელება რუსულად*"
+          name={"flag_image_path"}
+          validateStatus={errors?.flag_image_path && "error"}
+          help={errors?.flag_image_path}
+        >
+          <Upload
+            name="image"
+            action={"/api/images"}
+            listType={"picture"}
+            maxCount={1}
+            onRemove={removeImage}
+            onChange={(e) => setImg(e?.file?.response?.image_path)}
+            beforeUpload={beforeUpload}
+          >
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>
         </Form.Item>
-        <Form.Item name={"country_phone_code"} label="ქვეყნის სატელეფონო კოდი">
+        <Form.Item
+          name={"country_phone_code"}
+          label="ქვეყნის დროშა"
+          validateStatus={errors?.country_phone_code && "error"}
+          help={errors?.country_phone_code}
+        >
           <InputNumber
             placeholder="შეიყვანე ქვეყნის სატელეფონო კოდი"
             type="number"

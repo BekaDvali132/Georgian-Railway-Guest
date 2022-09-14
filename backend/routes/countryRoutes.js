@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 const {
   getCountries,
@@ -14,7 +15,8 @@ router.get("/", getCountries);
 router.get("/:id", getCountry);
 
 router.post(
-  "/",
+  "/"
+  ,
   check(["name_ka", "name_en", "name_ru"])
     .notEmpty()
     .withMessage("ქვეყნის სახელი აუცილებელია"),

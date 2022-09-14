@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const pool = require("../database/db");
+const {errorsObjectFormatter} = require('../middleware/errorsFormatter')
 
 // @desc    Get Countries
 // @route   GET /api/countries
@@ -31,12 +32,14 @@ const getCountry = async (req, res) => {
 // @route   POST /api/countries
 // @access  Private
 const setCountries = async (req, res) => {
+  errorsObjectFormatter(req,res)
+  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(200).json({ errors: errors.array() });
   }
 
-  const { name_ka, name_en, name_ru, flag_image_path, country_phone_code } =
+  const { name_ka, name_en, flag_image_path, name_ru, country_phone_code } =
     req.body;
 
   const newCountry = await pool.query(
@@ -45,7 +48,7 @@ const setCountries = async (req, res) => {
   );
 
   res.status(200).json({
-    message: "success",
+    status: "success",
     country: newCountry,
   });
 };

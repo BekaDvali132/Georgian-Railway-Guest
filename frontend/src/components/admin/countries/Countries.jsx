@@ -7,17 +7,17 @@ import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
-    title: "ქვეყნის სახელი ქართულად",
+    title: "ქვეყნის დასახელება ქართულად",
     dataIndex: "name_ka",
     key: "name_ka",
   },
   {
-    title: "ქვეყნის სახელი ინგლისურად",
+    title: "ქვეყნის დასახელება ინგლისურად",
     dataIndex: "name_en",
     key: "name_en",
   },
   {
-    title: "ქვეყნის სახელი რუსულად",
+    title: "ქვეყნის დასახელება რუსულად",
     dataIndex: "name_ru",
     key: "name_ru",
   },
