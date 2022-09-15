@@ -1,23 +1,20 @@
 import { Button, Form, Input, InputNumber, message, Space, Upload } from "antd";
 import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 
-function AddCountry() {
+function EditCountry() {
+  const {id} = useParams();
   const [form] = Form.useForm();
   let navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
+
+
   const [fileList, setFileList] = useState([]);
   const [file, setFile] = useState([]);
-
-  const getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  };
 
   const onFinish = (values) => {
 
@@ -49,9 +46,6 @@ function AddCountry() {
           status:'done',
           url: URL.createObjectURL(file)
         }]);
-        getBase64(file, (url) => {
-          setFile(url);
-        });
       } else {
       message.error("სურათი უნდა იყოს 500kb ზომის");
       }
@@ -129,4 +123,4 @@ function AddCountry() {
   );
 }
 
-export default AddCountry;
+export default EditCountry;

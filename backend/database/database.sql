@@ -13,3 +13,9 @@ ALTER TABLE countries
 ADD created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 ADD updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 ADD completed_at TIMESTAMPTZ;
+
+CREATE TABLE files(
+    id SERIAL PRIMARY KEY,
+    in_use boolean DEFAULT false,
+    file_path varchar(255)
+);
