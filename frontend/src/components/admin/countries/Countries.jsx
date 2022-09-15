@@ -7,6 +7,11 @@ import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
+    title: "ქვეყნის დროშა",
+    dataIndex: "flag_image_path",
+    key: "flag_image_path",
+  },
+  {
     title: "ქვეყნის დასახელება ქართულად",
     dataIndex: "name_ka",
     key: "name_ka",
@@ -42,6 +47,7 @@ function Countries() {
   const [countries, setCountries] = useState();
   const [render, setRender] = useState();
   let navigate = useNavigate();
+  const basepath = process.env.BASE_PATH || 'http://localhost:5000/';
 
   useEffect(() => {
     axios.get("/api/countries", { params: {} }).then((res) => {
@@ -83,6 +89,7 @@ function Countries() {
         dataSource={countries?.map((country) => {
           return {
             key: country.id,
+            flag_image_path: <img src={`${basepath}${country?.flag_image_path}`} width={50} height={50} style={{objectFit:'contain'}}/>,
             name_ka: country?.name_ka,
             name_en: country?.name_en,
             name_ru: country?.name_ru,

@@ -10,19 +10,35 @@ function EditCountry() {
   const [form] = Form.useForm();
   let navigate = useNavigate();
   const [errors, setErrors] = useState({});
-
-
-
   const [fileList, setFileList] = useState([]);
   const [file, setFile] = useState([]);
+  const basepath = process.env.BASE_PATH || 'http://localhost:5000/';
+
+  useEffect(()=>{
+    axios.get(`/api/countries/${id}`).then(res=>{
+      if (res?.data?.status === 'success') {        
+        form.setFieldsValue(res?.data?.data[0])
+        setFileList([{
+          uid:'-1',
+          name: res.data.data?.[0]?.name_ka,
+          url: `${basepath}${res.data.data?.[0]?.flag_image_path}`
+        }])
+      }
+    })
+  },[])
+
 
   const onFinish = (values) => {
-
     const formData = new FormData();
     Object.keys(values).map(key=>values?.[key] && formData.append(key, values?.[key]));
-    fileList && values?.flag_image?.file ? formData.set('flag_image', values?.flag_image?.file) : formData.delete('flag_image')
+    if (fileList && values?.flag_image?.file) {
+      formData.set('flag_image', values?.flag_image?.file) 
+    } else {
+      formData.delete('flag_image');
+      fileList && formData.append('flag_image_path', fileList?.[0]?.url?.replace(basepath,''))
+    }
 
-    axios.post("/api/countries", formData).then((res) => {
+    axios.put(`/api/countries/${id}`, formData).then((res) => {
       if (res?.data?.status === "success") {
         navigate("/countries");
       } else {
@@ -54,7 +70,7 @@ function EditCountry() {
     }
     return false;
   }
-
+console.log(file?.[0]?.url);
   return (
     <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
       <ArrowLeftOutlined

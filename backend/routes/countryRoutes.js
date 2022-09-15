@@ -26,15 +26,7 @@ router.post(
 
 router.put(
   "/:id",
-  check(["name_ka", "name_en", "name_ru"])
-    .notEmpty()
-    .withMessage("ქვეყნის სახელი აუცილებელია"),
-  check("flag_image_path").notEmpty().withMessage("ქვეყნის დროშა აუცილებელია"),
-  check("country_phone_code")
-    .notEmpty()
-    .withMessage("ქვეყნის სატელოფონო კოდი აუცილებელია")
-    .isNumeric()
-    .withMessage("ქვეყნის სატელოფონო კოდის ფორმატი არასწორია"),
+  upload.single('flag_image'),
   updateCountry
 );
 
