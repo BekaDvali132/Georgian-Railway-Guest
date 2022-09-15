@@ -1,8 +1,6 @@
 const express = require("express");
 const {upload} = require('../functions/imageUpload');
 const router = express.Router();
-const multer = require('multer');
-const read = multer();
 
 const {
   getCountries,
@@ -11,7 +9,6 @@ const {
   updateCountry,
   deleteCountry,
 } = require("../controllers/countryController");
-const { check } = require("express-validator");
 
 router.get("/", getCountries);
 
