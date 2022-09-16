@@ -1,8 +1,5 @@
-const { validationResult } = require("express-validator");
 const pool = require("../database/db");
-const { errorsObjectFormatter } = require("../middleware/errorsFormatter");
 const { unlink } = require("fs");
-const { upload } = require("../functions/imageUpload");
 
 // @desc    Get Countries
 // @route   GET /api/countries
