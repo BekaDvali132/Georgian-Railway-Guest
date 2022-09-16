@@ -10,10 +10,10 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<AdminRoute />}>
-            <Route exact path="/countries/add" element={<AddCountry />} />
-            <Route exact path="/countries/:id/edit" element={<EditCountry />} />
-            <Route exact path="/countries" element={<Countries />} />
+          <Route path="/admin" element={<AdminRoute />}>
+            <Route exact path="/admin/countries/add" element={<AddCountry />} />
+            <Route exact path="/admin/countries/:id/edit" element={<EditCountry />} />
+            <Route exact path="/admin/countries" element={<Countries />} />
           </Route>
         </Routes>
       </div>

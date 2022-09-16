@@ -30,7 +30,7 @@ function AdminRoute() {
               key: "1",
               icon: <FlagOutlined />,
               label: "ქვეყნები",
-              onClick: ()=>navigate('../countries')
+              onClick: ()=>navigate('/admin/countries')
             }
           ]}
         ></Menu>

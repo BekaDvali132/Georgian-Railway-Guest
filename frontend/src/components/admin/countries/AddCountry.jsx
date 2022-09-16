@@ -27,7 +27,7 @@ function AddCountry() {
 
     axios.post("/api/countries", formData).then((res) => {
       if (res?.data?.status === "success") {
-        navigate("/countries");
+        navigate("/admin/countries");
       } else {
         setErrors(res?.data?.errors);
       }
@@ -65,7 +65,7 @@ function AddCountry() {
     <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
       <ArrowLeftOutlined
         style={{ fontSize: "20px" }}
-        onClick={() => navigate("/countries")}
+        onClick={() => navigate("/admin/countries")}
       />
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item

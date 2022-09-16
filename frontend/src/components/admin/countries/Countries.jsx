@@ -84,7 +84,7 @@ function Countries() {
 
   return (
     <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
-      <Button type="primary" onClick={()=>navigate('/countries/add')}>ქვეყნის დამატება</Button>
+      <Button type="primary" onClick={()=>navigate('/admin/countries/add')}>ქვეყნის დამატება</Button>
       <Table
         dataSource={countries?.map((country) => {
           return {
@@ -94,7 +94,7 @@ function Countries() {
             name_en: country?.name_en,
             name_ru: country?.name_ru,
             country_phone_code: country?.country_phone_code,
-            edit: <Button onClick={()=>navigate(`/countries/${country?.id}/edit`)}>რედაქტირება</Button>,
+            edit: <Button onClick={()=>navigate(`/admin/countries/${country?.id}/edit`)}>რედაქტირება</Button>,
             delete: (
               <Button
                 type="danger"
