@@ -1,0 +1,18 @@
+form.login{
+    max-width: 500px;
+    padding: 20px;
+    width: 100%;
+    transform: translateY(-100px);
+    border: 1px solid green;
+    border-radius: 20px;
+    &.error{
+        border-color: #ff4d4f;
+    }
+}
+
+.login-page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}

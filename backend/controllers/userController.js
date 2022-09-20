@@ -88,9 +88,11 @@ const loginUser = async (req, res) => {
     res.status(200).json({
       status: "success",
       data: {
-        username: user?.rows?.[0]?.username,
-        email: user?.rows?.[0]?.email,
-        role: user?.rows?.[0]?.role,
+        user: {
+          username: user?.rows?.[0]?.username,
+          email: user?.rows?.[0]?.email,
+          role: user?.rows?.[0]?.role,
+        },
         token: generateToken(user?.rows?.[0]?.id),
       },
     });
@@ -103,12 +105,13 @@ const loginUser = async (req, res) => {
   }
 };
 
-const getMe = (req,res) => {
+const getMe = (req, res) => {
   res.status(200).json({
-    status:'success',
-    user: req?.user
-  })
-}
+    status: "success",
+    user: req?.user,
+    token: generateToken(req?.user?.id),
+  });
+};
 
 // Generate JWT
 const generateToken = (id) => {
@@ -122,5 +125,5 @@ module.exports = {
   updateUser,
   deleteUser,
   loginUser,
-  getMe
+  getMe,
 };
