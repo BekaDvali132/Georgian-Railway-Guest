@@ -6,12 +6,14 @@ import { useState } from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../../contexts/adminContext/adminContext";
+import useTranslation from "../../hooks/translation/useTranslation";
 import "./Login.scss";
 function Login() {
   const adminContext = useContext(AdminContext);
   const navigate = useNavigate();
   const [errors, setErrors] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const {trans} = useTranslation()
 
   const handleFinish = async (values) => {
     setIsLoading(true);
@@ -88,7 +90,7 @@ function Login() {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={isLoading}>
-            შენახვა
+            {trans('submit')}
           </Button>
         </Form.Item>
       </Form>

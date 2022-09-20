@@ -4,50 +4,52 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-const columns = [
-  {
-    title: "ქვეყნის დროშა",
-    dataIndex: "flag_image_path",
-    key: "flag_image_path",
-  },
-  {
-    title: "ქვეყნის დასახელება ქართულად",
-    dataIndex: "name_ka",
-    key: "name_ka",
-  },
-  {
-    title: "ქვეყნის დასახელება ინგლისურად",
-    dataIndex: "name_en",
-    key: "name_en",
-  },
-  {
-    title: "ქვეყნის დასახელება რუსულად",
-    dataIndex: "name_ru",
-    key: "name_ru",
-  },
-  {
-    title: "ქვეყნის სატელეფონო კოდი",
-    dataIndex: "country_phone_code",
-    key: "country_phone_code",
-  },
-  {
-    title: "რედაქტირება",
-    dataIndex: "edit",
-    key: "edit",
-  },
-  {
-    title: "წაშლა",
-    dataIndex: "delete",
-    key: "delete",
-  },
-];
+import useTranslation from "../../hooks/translation/useTranslation";
 
 function Countries() {
   const [countries, setCountries] = useState();
   const [render, setRender] = useState();
   let navigate = useNavigate();
   const basepath = process.env.BASE_PATH || 'http://localhost:5000/';
+  const {trans} = useTranslation();
+
+  const columns = [
+    {
+      title: trans('country_flag'),
+      dataIndex: "flag_image_path",
+      key: "flag_image_path",
+    },
+    {
+      title: trans('country_name_geo'),
+      dataIndex: "name_ka",
+      key: "name_ka",
+    },
+    {
+      title: trans('country_name_en'),
+      dataIndex: "name_en",
+      key: "name_en",
+    },
+    {
+      title: trans('country_name_ru'),
+      dataIndex: "name_ru",
+      key: "name_ru",
+    },
+    {
+      title: trans('country_phone_code'),
+      dataIndex: "country_phone_code",
+      key: "country_phone_code",
+    },
+    {
+      title: trans('edit'),
+      dataIndex: "edit",
+      key: "edit",
+    },
+    {
+      title: trans('delete'),
+      dataIndex: "delete",
+      key: "delete",
+    },
+  ];
 
   useEffect(() => {
     axios.get("/api/countries", { params: {} }).then((res) => {
@@ -84,7 +86,7 @@ function Countries() {
 
   return (
     <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
-      <Button type="primary" onClick={()=>navigate('/admin/countries/add')}>ქვეყნის დამატება</Button>
+      <Button type="primary" onClick={()=>navigate('/admin/countries/add')}>{trans('add_country')}</Button>
       <Table
         dataSource={countries?.map((country) => {
           return {
@@ -94,13 +96,13 @@ function Countries() {
             name_en: country?.name_en,
             name_ru: country?.name_ru,
             country_phone_code: country?.country_phone_code,
-            edit: <Button onClick={()=>navigate(`/admin/countries/${country?.id}/edit`)}>რედაქტირება</Button>,
+            edit: <Button onClick={()=>navigate(`/admin/countries/${country?.id}/edit`)}>{trans('edit')}</Button>,
             delete: (
               <Button
                 type="danger"
                 onClick={() => checkIfDelete(country?.id, country?.name_ka)}
               >
-                წაშლა
+                {trans('delete')}
               </Button>
             ),
           };

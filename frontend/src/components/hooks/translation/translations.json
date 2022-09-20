@@ -1,0 +1,27 @@
+{
+    "en":{
+        "submit":"Submit",
+        "countries":"Countries",
+        "add_country":"Add country",
+        "edit":"Edit",
+        "country_flag":"Country's flag",
+        "country_name_geo":"Country's Georgian name",
+        "country_name_en":"Country's English name",
+        "country_name_ru":"Country's Russian name",
+        "country_phone_code":"Country's phone code",
+        "delete":"Delete"
+    },
+    "ka":{
+        "submit":"შენახვა",
+        "countries":"ქვეყნები",
+        "add_country":"ქვეყნის დამატება",
+        "edit":"რედაქტირება",
+        "country_flag":"ქვეყნის დროშა",
+        "country_name_geo":"ქვეყნის დასახელება ქართულად",
+        "country_name_en":"ქვეყნის დასახელება ინგლისურად",
+        "country_name_ru":"ქვეყნის დასახელება რუსულად",
+        "country_phone_code":"ქვეყნის სატელეფონო კოდი",
+        "delete":"წაშლა"
+
+    }
+}

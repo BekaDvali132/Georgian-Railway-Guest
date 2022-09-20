@@ -1,7 +1,7 @@
 const express = require("express");
-const {upload} = require('../functions/imageUpload');
+const { upload } = require("../functions/imageUpload");
 const router = express.Router();
-
+const { protect } = require("../middleware/authMiddleware");
 const {
   getCountries,
   getCountry,
@@ -10,25 +10,14 @@ const {
   deleteCountry,
 } = require("../controllers/countryController");
 
-router.get("/", getCountries);
+router.get("/", protect, getCountries);
 
-router.get("/:id", getCountry);
+router.get("/:id", protect, getCountry);
 
-router.post(
-  "/",
-  upload.single('flag_image')
-  ,
-  setCountries
-);
+router.post("/", protect, upload.single("flag_image"), setCountries);
 
-router.put(
-  "/:id",
-  upload.single('flag_image'),
-  updateCountry
-);
+router.put("/:id", protect, upload.single("flag_image"), updateCountry);
 
-router.delete(
-  "/:id", deleteCountry
-);
+router.delete("/:id", protect, deleteCountry);
 
 module.exports = router;

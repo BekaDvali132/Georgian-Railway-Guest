@@ -10,6 +10,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import { AdminContext } from "../../contexts/adminContext/adminContext";
+import useTranslation from "../../hooks/translation/useTranslation";
+import { TranslationContext } from "../../contexts/TranslationContext";
 
 const { Header, Sider, Content } = Layout;
 
@@ -17,12 +19,14 @@ function AdminRoute() {
   const [collapsed, setCollapsed] = useState(false);
   let navigate = useNavigate();
   const adminContext = useContext(AdminContext)
+  const {trans, currentLanguage} = useTranslation();
+  const {setCurrentLanguage} = useContext(TranslationContext)
 
-  axios.interceptors.request.use(function (config){
-    if (typeof localStorage.getItem('accessToken') == 'string') {
-      config.headers.authorization = 'Bearer ' + JSON?.parse(localStorage.getItem('accessToken'));
-      return config;
-    }
+  axios.interceptors.request.use(function (req){
+    if(localStorage.getItem('accessToken')) {
+      req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('accessToken'))}`;
+  }
+  return req;
   })
 
   const getMe = () => {
@@ -71,12 +75,11 @@ function AdminRoute() {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["1"]}
           items={[
             {
               key: "1",
               icon: <FlagOutlined />,
-              label: "ქვეყნები",
+              label: trans('countries'),
               onClick: ()=>navigate('/admin/countries')
             }
           ]}
@@ -93,6 +96,9 @@ function AdminRoute() {
                 className: 'trigger',
                 onClick: () => setCollapsed(!collapsed)
             })}
+            <div className="language-changer">
+            <div className={`language ${currentLanguage === 'ka' && 'active'}`} onClick={()=>{setCurrentLanguage('ka')}}>ქარ</div> / <div className={`language ${currentLanguage === 'en' && 'active'}`} onClick={()=>{setCurrentLanguage('en')}}>ENG</div>
+            </div> 
         </Header>
         <Content
         className="site-layout-background"
