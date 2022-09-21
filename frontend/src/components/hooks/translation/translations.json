@@ -21,7 +21,22 @@
         "country_name_en":"ქვეყნის დასახელება ინგლისურად",
         "country_name_ru":"ქვეყნის დასახელება რუსულად",
         "country_phone_code":"ქვეყნის სატელეფონო კოდი",
-        "delete":"წაშლა"
+        "delete":"წაშლა",
+        "choose_image":"აირჩიე სურათი",
+        "logout":"გასვლა",
+        "input":"შეიყვანე",
+        "input_country_flag":"ქვეყნის დროშა",
+        "input_country_name_geo":"შეიყვანე ქვეყნის დასახელება ქართულად",
+        "input_country_name_en":"შეიყვანე ქვეყნის დასახელება ინგლისურად",
+        "input_country_name_ru":"შეიყვანე ქვეყნის დასახელება რუსულად",
+        "input_country_phone_code":"შეიყვანე ქვეყნის სატელეფონო კოდი",
+        "delete_country":"ქვეყნის წაშლა",
+        "yes":"დიახ",
+        "no":"არა",
+        "country_delete_in_progress":"მიმდინარეობს ქვეყნის წაშლა",
+        "country_successfully_deleted":"ქვეყანა წარმატებით წაიშალა",
+        "username":"დასახელება",
+        "password":"პაროლი"
 
     }
 }

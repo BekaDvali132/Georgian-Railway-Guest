@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../../contexts/adminContext/adminContext";
 import useTranslation from "../../hooks/translation/useTranslation";
 import "./Login.scss";
+import translations from '../../hooks/translation/translations.json';
+
 function Login() {
   const adminContext = useContext(AdminContext);
   const navigate = useNavigate();
@@ -73,7 +75,7 @@ function Login() {
         onFinish={handleFinish}
       >
         <Form.Item
-          label="დასახელება"
+          label={translations['ka']['username']}
           name={"username"}
           validateStatus={errors?.username && "error"}
           help={errors?.username}
@@ -81,7 +83,7 @@ function Login() {
           <Input />
         </Form.Item>
         <Form.Item
-          label="პაროლი"
+          label={translations['ka']['password']}
           name={"password"}
           validateStatus={errors?.password && "error"}
           help={errors?.password}
@@ -90,7 +92,7 @@ function Login() {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={isLoading}>
-            {trans('submit')}
+            {translations['ka']['submit']}
           </Button>
         </Form.Item>
       </Form>

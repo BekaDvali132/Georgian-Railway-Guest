@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
+import translations from '../../hooks/translation/translations.json'
 
 function EditCountry() {
   const {id} = useParams();
@@ -62,11 +63,12 @@ function EditCountry() {
           status:'done',
           url: URL.createObjectURL(file)
         }]);
+        setErrors({...errors,flag_image:null})
       } else {
-      message.error("სურათი უნდა იყოს 500kb ზომის");
+        setErrors({...errors,flag_image:"სურათი უნდა იყოს 500kb ზომის"})
       }
     } else {
-      message.error("სურათ უნდა იყოს .jpeg, .jpg, .png ან .svg გაფართოების");
+      setErrors({...errors,flag_image:"სურათ უნდა იყოს .jpeg, .jpg, .png ან .svg გაფართოების"})
     }
     return false;
   }
@@ -79,33 +81,33 @@ console.log(file?.[0]?.url);
       />
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item
-          label="ქვეყნის დასახელება ქართულად*"
+          label={`${translations['ka']['country_name_geo']}*`}
           name={"name_ka"}
           validateStatus={errors?.name_ka && "error"}
           help={errors?.name_ka}
         >
-          <Input placeholder="შეიყვანე ქვეყნის დასახელება" />
+          <Input placeholder={translations['ka']['input_country_name_geo']} />
         </Form.Item>
         <Form.Item
-          label="ქვეყნის დასახელება ინგლისურად*"
+          label={`${translations['ka']['country_name_en']}*`}
           name={"name_en"}
           validateStatus={errors?.name_en && "error"}
           help={errors?.name_en}
         >
-          <Input placeholder="შეიყვანე ქვეყნის დასახელება" />
+          <Input placeholder={translations['ka']['input_country_name_en']} />
         </Form.Item>
         <Form.Item
-          label="ქვეყნის დასახელება რუსულად*"
+          label={`${translations['ka']['country_name_ru']}*`}
           name={"name_ru"}
           validateStatus={errors?.name_ru && "error"}
           help={errors?.name_ru}
         >
-          <Input placeholder="შეიყვანე ქვეყნის დასახელება" />
+          <Input placeholder={translations['ka']['input_country_name_ru']} />
         </Form.Item>
 
         <Form.Item
         name={'flag_image'}
-        label={"ქვეყნის დროშა"}
+        label={`${translations['ka']['country_flag']}*`}
         validateStatus={errors?.flag_image && "error"}
         help={errors?.flag_image}>
         <Upload
@@ -114,24 +116,24 @@ console.log(file?.[0]?.url);
           fileList={fileList}
           onRemove={()=>setFileList(null)}
         >
-          <Button icon={<UploadOutlined />}>აირჩიეთ სურათი</Button>
+          <Button icon={<UploadOutlined />}>{translations['ka']['choose_image']}</Button>
         </Upload>
         </Form.Item>
         <Form.Item
           name={"country_phone_code"}
-          label="ქვეყნის სატელეფონო კოდი*"
+          label={`${translations['ka']['country_phone_code']}*`}
           validateStatus={errors?.country_phone_code && "error"}
           help={errors?.country_phone_code}
         >
           <InputNumber
-            placeholder="შეიყვანე ქვეყნის სატელეფონო კოდი"
+            placeholder={translations['ka']['input_country_phone_code']}
             type="number"
-            controls={"none"}
+            controls={false}
           />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            შენახვა
+            {translations['ka']['submit']}
           </Button>
         </Form.Item>
       </Form>

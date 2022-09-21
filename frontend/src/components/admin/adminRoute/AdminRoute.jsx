@@ -3,6 +3,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   FlagOutlined,
+  LogoutOutlined
 } from "@ant-design/icons";
 import React, { useContext, useState } from "react";
 import './AdminRoute.scss'
@@ -12,11 +13,13 @@ import { useEffect } from "react";
 import { AdminContext } from "../../contexts/adminContext/adminContext";
 import useTranslation from "../../hooks/translation/useTranslation";
 import { TranslationContext } from "../../contexts/TranslationContext";
+import translations  from "../../hooks/translation/translations.json";
 
 const { Header, Sider, Content } = Layout;
 
 function AdminRoute() {
   const [collapsed, setCollapsed] = useState(false);
+  const [activeKey, setActiveKey] = useState();
   let navigate = useNavigate();
   const adminContext = useContext(AdminContext)
   const {trans, currentLanguage} = useTranslation();
@@ -70,7 +73,8 @@ function AdminRoute() {
       <Sider 
       trigger={null} 
       collapsible 
-      collapsed={collapsed}>
+      collapsed={collapsed}
+      >
         <div className="logo" />
         <Menu
           theme="dark"
@@ -79,10 +83,18 @@ function AdminRoute() {
             {
               key: "1",
               icon: <FlagOutlined />,
-              label: trans('countries'),
-              onClick: ()=>navigate('/admin/countries')
+              label: translations['ka']?.['countries'],
+              onClick: ()=>(navigate('/admin/countries'),setActiveKey(1))
+              
+            },
+            {
+              key: "2",
+              icon: <LogoutOutlined />,
+              label: translations['ka']?.['logout'],
+              onClick: ()=>(adminContext.resetUser(),navigate('/admin/login'))
             }
           ]}
+          defaultActiveFirst={activeKey}
         ></Menu>
       </Sider>
       <Layout className="site-layout">
@@ -96,9 +108,9 @@ function AdminRoute() {
                 className: 'trigger',
                 onClick: () => setCollapsed(!collapsed)
             })}
-            <div className="language-changer">
+            {/* <div className="language-changer">
             <div className={`language ${currentLanguage === 'ka' && 'active'}`} onClick={()=>{setCurrentLanguage('ka')}}>ქარ</div> / <div className={`language ${currentLanguage === 'en' && 'active'}`} onClick={()=>{setCurrentLanguage('en')}}>ENG</div>
-            </div> 
+            </div>  */}
         </Header>
         <Content
         className="site-layout-background"

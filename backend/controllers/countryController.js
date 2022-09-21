@@ -12,6 +12,7 @@ const getCountries = async (req, res) => {
   res.status(200).json({
     status: "success",
     data: countries?.rows,
+    pages: countries?.rows?.length / 10
   });
 };
 
@@ -38,19 +39,19 @@ const setCountries = async (req, res) => {
   const errors = {};
 
   if (!name_ka) {
-    errors.name_ka = "ქვეყნის სახელი აუცილებელი";
+    errors.name_ka = "ქვეყნის ქართული სახელი აუცილებელია";
   }
   if (!name_en) {
-    errors.name_en = "ქვეყნის სახელი აუცილებელი";
+    errors.name_en = "ქვეყნის ინგლისური სახელი აუცილებელია";
   }
   if (!name_ru) {
-    errors.name_ru = "ქვეყნის სახელი აუცილებელი";
+    errors.name_ru = "ქვეყნის რუსული სახელი აუცილებელია";
   }
   if (!req?.file?.path) {
-    errors.flag_image = "ქვეყნის დროშა აუცილებელი";
+    errors.flag_image = "ქვეყნის დროშა აუცილებელია";
   }
   if (!country_phone_code) {
-    errors.country_phone_code = "ქვეყნის სატელოფონო კოდი აუცილებელი";
+    errors.country_phone_code = "ქვეყნის სატელოფონო კოდი აუცილებელია";
   }
 
   if (Object.keys(errors).length > 0) {
@@ -88,19 +89,19 @@ const updateCountry = async (req, res) => {
   const errors = {};
 
   if (!name_ka) {
-    errors.name_ka = "ქვეყნის სახელი აუცილებელი";
+    errors.name_ka = "ქვეყნის ქართული სახელი აუცილებელია";
   }
   if (!name_en) {
-    errors.name_en = "ქვეყნის სახელი აუცილებელი";
+    errors.name_en = "ქვეყნის ინგლისური სახელი აუცილებელია";
   }
   if (!name_ru) {
-    errors.name_ru = "ქვეყნის სახელი აუცილებელი";
+    errors.name_ru = "ქვეყნის რუსული სახელი აუცილებელია";
   }
   if (!req?.file?.path && !flag_image_path) {
-    errors.flag_image = "ქვეყნის დროშა აუცილებელი";
+    errors.flag_image = "ქვეყნის დროშა აუცილებელია";
   }
   if (!country_phone_code) {
-    errors.country_phone_code = "ქვეყნის სატელოფონო კოდი აუცილებელი";
+    errors.country_phone_code = "ქვეყნის სატელოფონო კოდი აუცილებელია";
   }
 
   if (Object.keys(errors).length > 0) {
