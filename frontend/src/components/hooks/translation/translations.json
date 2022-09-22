@@ -36,7 +36,8 @@
         "country_delete_in_progress":"მიმდინარეობს ქვეყნის წაშლა",
         "country_successfully_deleted":"ქვეყანა წარმატებით წაიშალა",
         "username":"დასახელება",
-        "password":"პაროლი"
+        "password":"პაროლი",
+        "physical/legal_individuals":"ფიზ./იურ. პირები"
 
     }
 }

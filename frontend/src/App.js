@@ -12,6 +12,7 @@ import {
 } from "./components/contexts/adminContext/adminContext";
 import axios from "axios";
 import { TranslationContextProvider } from "./components/contexts/TranslationContext";
+import Individuals from "./components/admin/individuals/Individuals";
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
                   element={<EditCountry />}
                 />
                 <Route exact path="/admin/countries" element={<Countries />} />
+                <Route exact path="/admin/individuals" element={<Individuals />} />
               </Route>
             </Routes>
           </AdminContextProvider>

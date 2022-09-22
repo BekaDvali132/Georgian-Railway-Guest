@@ -15,5 +15,6 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/api/countries", require("./routes/countryRoutes"));
 app.use('/api/users', require('./routes/userRoutes'))
+app.use('/api/customers', require('./routes/customerRoutes'))
 
 app.listen(port, () => console.log(`server started on port ${port}`));

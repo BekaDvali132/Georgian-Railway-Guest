@@ -3,7 +3,8 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   FlagOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  UsergroupAddOutlined
 } from "@ant-design/icons";
 import React, { useContext, useState } from "react";
 import './AdminRoute.scss'
@@ -89,6 +90,13 @@ function AdminRoute() {
             },
             {
               key: "2",
+              icon: <UsergroupAddOutlined />,
+              label: translations['ka']?.['physical/legal_individuals'],
+              onClick: ()=>(navigate('/admin/individuals'),setActiveKey(1))
+              
+            },
+            {
+              key: "3",
               icon: <LogoutOutlined />,
               label: translations['ka']?.['logout'],
               onClick: ()=>(adminContext.resetUser(),navigate('/admin/login'))
