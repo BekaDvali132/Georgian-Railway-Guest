@@ -1,4 +1,4 @@
-import { Button, Space, Table } from 'antd';
+import { Button, message, Modal, Space, Table } from 'antd';
 import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
@@ -67,6 +67,7 @@ const columns = [
 function Customers() {
   const navigate = useNavigate();
   const [physicalCustomers, setPhysicalCustomers] = useState([])
+  const [render, setRender] = useState(false)
 
   useEffect(()=>{
     axios.get('/api/customers').then(res=>{
@@ -75,7 +76,33 @@ function Customers() {
       }
     })
 
-  },[])
+  },[render])
+
+  const checkIfDelete = (id, name) => {
+    Modal.confirm({
+      title: translations['ka']['delete_customer'],
+      content: `თქვენ ნამდვილად გსურთ, რომ ${name} წაშალოთ?`,
+      okText: translations['ka']['yes'],
+      onOk: () => deleteCustomer(id),
+      cancelText: translations['ka']['no'],
+    });
+  };
+
+  const deleteCustomer = (id) => {
+    message
+      .loading(
+        translations['ka']['customer_delete_in_progress'],
+        axios.delete(`/api/customers/physical/${id}`).then((res) => {
+          if (res?.data.status === "success") {
+            setRender(!render);
+          }
+        })
+      )
+      .then(() =>
+        setTimeout(() => message.success(translations['ka']['customer_successfully_deleted']), 400)
+      );
+  };
+
   return (
       <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
       <Button type="primary" onClick={()=>navigate('/admin/customers/add')}>{translations['ka']['add_customer']}</Button>
@@ -94,7 +121,12 @@ function Customers() {
           phone_number: customer?.phone_number,
           email: customer?.email,
           edit: <Button> {translations['ka']['edit']}</Button>,
-          delete: <Button type='danger'>{translations['ka']['delete']}</Button>
+          delete: <Button
+          type="danger"
+          onClick={() => checkIfDelete(customer?.id, customer?.name_ka)}
+        >
+          {translations['ka']['delete']}
+        </Button>
         };
       })}
         columns={columns}

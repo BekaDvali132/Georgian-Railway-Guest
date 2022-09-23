@@ -152,10 +152,31 @@ const getCustomerForm = async (req, res) => {
     2: "მდედრობითი",
   };
 
+  let verifications = {
+    1: 'ელ.ფოსტით',
+    2: 'ტელ. ნომრით'
+  }
+
   res.status(200).json({
     status: "success",
-    data: { countries: countries?.rows, genders: genders },
+    data: { countries: countries?.rows, genders: genders, verifications: verifications},
   });
 };
 
-module.exports = { getCustomers, setPhysicalCustomers, getCustomerForm };
+// @desc    Delete Physical Customer
+// @route   Delete /api/customers/physical
+// @access  Private
+const deletePhysicalCustomer = async (req, res) => {
+  const deletePhysicalCustomer = await pool.query(
+    `DELETE FROM physical_customers WHERE id = ${req.params.id}`
+  );
+
+  if (deletePhysicalCustomer) {
+    res.status(200).json({
+      status: "success",
+    });
+  }
+  
+};
+
+module.exports = { getCustomers, setPhysicalCustomers, getCustomerForm, deletePhysicalCustomer };

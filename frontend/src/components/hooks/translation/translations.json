@@ -47,7 +47,13 @@
         "passport_number":"პასპორტის ნომერი",
         "phone_number":"ტელ.ნომერი",
         "email":"ელ.ფოსტა",
-        "add_customer":"კლიენტის დამატება"
+        "add_customer":"კლიენტის დამატება",
+        "verification_method":"ვერიფიკაციის მეთოდი",
+        "verify":"ვერიფიკაცია",
+        "input_verification_code":"შეიყვანე ვერიფიკაციის კოდი",
+        "send_code":"კოდის გაგზავნა",
+        "send_code_again":"ხელახლა კოდის გაგზავნა",
+        "confirm":"დადასტურება"
 
     }
 }
