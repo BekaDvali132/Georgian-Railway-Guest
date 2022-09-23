@@ -6,7 +6,8 @@ const {
   setPhysicalCustomers,
   getCustomerForm,
   deletePhysicalCustomer,
-  setLegalCustomer
+  setLegalCustomer,
+  deleteLegalCustomer
 } = require("../controllers/customerController");
 const { check,matchedData } = require("express-validator");
 const pool = require("../database/db");
@@ -77,5 +78,6 @@ router.post(
 );
 
 router.delete('/physical/:id', protect, deletePhysicalCustomer)
+router.delete('/legal/:id', protect, deleteLegalCustomer)
 
 module.exports = router;

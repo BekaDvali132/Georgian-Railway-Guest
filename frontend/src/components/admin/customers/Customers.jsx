@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import translations from '../../hooks/translation/translations.json'
 
-const columns = [
+const physicalCustomerColumns = [
   {
     title: translations['ka']['name'],
     dataIndex: "name",
@@ -64,35 +64,92 @@ const columns = [
   }
 ];
 
+const legalCustomerColumns = [
+  {
+    title: translations['ka']['country'],
+    dataIndex: "country",
+    key: "country",
+  },
+  {
+    title: translations['ka']['identification_number'],
+    dataIndex: "identification_number",
+    key: "identification_number",
+  },
+  {
+    title: translations['ka']['organization_type'],
+    dataIndex: "organization_type",
+    key: "organization_type",
+  },
+  {
+    title: translations['ka']['organization_name'],
+    dataIndex: "organization_name",
+    key: "organization_name",
+  },
+  {
+    title: translations['ka']['bank_account_number'],
+    dataIndex: "bank_account_number",
+    key: "bank_account_number",
+  },
+  {
+    title: translations['ka']['legal_address'],
+    dataIndex: "legal_address",
+    key: "legal_address",
+  },
+  {
+    title: translations['ka']['phone_number'],
+    dataIndex: "phone_number",
+    key: "phone_number",
+  },
+  {
+    title: translations['ka']['email'],
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: translations['ka']['edit'],
+    dataIndex: "edit",
+    key: "edit",
+  },
+  {
+    title: translations['ka']['delete'],
+    dataIndex: "delete",
+    key: "delete",
+  }
+];
+
 function Customers() {
   const navigate = useNavigate();
-  const [physicalCustomers, setPhysicalCustomers] = useState([])
+  const [physicalCustomers, setPhysicalCustomers] = useState([]);
+  const [legalCustomers, setLegalCustomers] = useState([]);
+  const [organizationTypes, setOrganizationTypes] = useState(null);
   const [render, setRender] = useState(false)
 
   useEffect(()=>{
     axios.get('/api/customers').then(res=>{
       if(res?.data?.status === 'success'){
         setPhysicalCustomers(res?.data?.data?.physical_customers)
+        setLegalCustomers(res?.data?.data?.legal_customers)
+        setOrganizationTypes(res?.data?.data?.organization_types)
       }
     })
 
   },[render])
 
-  const checkIfDelete = (id, name) => {
+  const checkIfDelete = (id, name, isLegal) => {
     Modal.confirm({
       title: translations['ka']['delete_customer'],
       content: `თქვენ ნამდვილად გსურთ, რომ ${name} წაშალოთ?`,
       okText: translations['ka']['yes'],
-      onOk: () => deleteCustomer(id),
+      onOk: () => deleteCustomer(id, isLegal),
       cancelText: translations['ka']['no'],
     });
   };
 
-  const deleteCustomer = (id) => {
+  const deleteCustomer = (id,isLegal) => {
     message
       .loading(
         translations['ka']['customer_delete_in_progress'],
-        axios.delete(`/api/customers/physical/${id}`).then((res) => {
+        axios.delete(`/api/customers/${isLegal ? 'legal' : 'physical'}/${id}`).then((res) => {
           if (res?.data.status === "success") {
             setRender(!render);
           }
@@ -107,6 +164,8 @@ function Customers() {
       <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
       <Button type="primary" onClick={()=>navigate('/admin/customers/add')}>{translations['ka']['add_customer']}</Button>
       <div className="overflow-table">
+      <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
+        <h2>{translations['ka']['physical_customers']}</h2>
       <Table
       dataSource={physicalCustomers?.map((customer) => {
         return {
@@ -123,14 +182,44 @@ function Customers() {
           edit: <Button> {translations['ka']['edit']}</Button>,
           delete: <Button
           type="danger"
-          onClick={() => checkIfDelete(customer?.id, customer?.name_ka)}
+          onClick={() => checkIfDelete(customer?.id, customer?.name_ka, false)}
         >
           {translations['ka']['delete']}
         </Button>
         };
       })}
-        columns={columns}
+        columns={physicalCustomerColumns}
       />
+      </Space>
+      </div>
+      <div className="overflow-table">
+      <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
+        <h2>{translations['ka']['legal_customers']}</h2>
+      <Table
+      dataSource={legalCustomers?.map((customer) => {
+        return {
+          key: customer?.id,
+          country: customer?.country,
+          identification_number: customer?.identification_number,
+          organization_type: organizationTypes?.find(type=>type.id === customer?.organization_type_id)?.name_ka,
+          organization_name: customer?.organization_name,
+          bank_account_number: customer?.bank_account_number,
+          legal_address: customer?.legal_address,
+          country_phone_code: customer?.country_phone_code,
+          phone_number: customer?.phone_number,
+          email: customer?.email,
+          edit: <Button> {translations['ka']['edit']}</Button>,
+          delete: <Button
+          type="danger"
+          onClick={() => checkIfDelete(customer?.id, customer?.organization_name, true)}
+        >
+          {translations['ka']['delete']}
+        </Button>
+        };
+      })}
+        columns={legalCustomerColumns}
+      />
+      </Space>
       </div>
     </Space>
   )

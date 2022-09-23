@@ -12,13 +12,18 @@ const getCustomers = async (req, res) => {
     "SELECT * from physical_customers ORDER BY created_at"
   );
   const legalCustomers = await pool.query(
-    "SELECT * from physical_customers ORDER BY created_at"
+    "SELECT * from legal_customers ORDER BY created_at"
+  );
+  const organizationTypes = await pool.query(
+    "SELECT * from organization_types"
   );
 
   res.status(200).json({
     status: "success",
     data: {
       physical_customers: physicalCustomers?.rows,
+      legal_customers: legalCustomers?.rows,
+      organization_types: organizationTypes?.rows
     },
   });
 };
@@ -239,10 +244,26 @@ const deletePhysicalCustomer = async (req, res) => {
   }
 };
 
+// @desc    Delete Physical Customer
+// @route   Delete /api/customers/physical
+// @access  Private
+const deleteLegalCustomer = async (req, res) => {
+  const deleteLegalCustomer = await pool.query(
+    `DELETE FROM legal_customers WHERE id = ${req.params.id}`
+  );
+
+  if (deleteLegalCustomer) {
+    res.status(200).json({
+      status: "success",
+    });
+  }
+};
+
 module.exports = {
   getCustomers,
   setPhysicalCustomers,
   getCustomerForm,
   deletePhysicalCustomer,
   setLegalCustomer,
+  deleteLegalCustomer
 };

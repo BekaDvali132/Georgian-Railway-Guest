@@ -61,7 +61,9 @@
         "organization_type":"ორგანიზაციის ტიპი",
         "organization_name": "ორგანიზაციის დასახელება",
         "bank_account_number":"საბანკო ანგარიშის ნომერი",
-        "legal_address":"იურიდიული მისამართი"
+        "legal_address":"იურიდიული მისამართი",
+        "physical_customers":"ფიზიკური კლიენტები",
+        "legal_customers":"იურიდიული კლიენტები"
 
     }
 }
