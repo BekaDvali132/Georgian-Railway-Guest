@@ -147,6 +147,8 @@ const setPhysicalCustomers = async (req, res) => {
 const getCustomerForm = async (req, res) => {
   let countries = await pool.query("Select id,name_ka,country_phone_code from countries");
 
+  let organizationTypes = await pool.query("SELECT id,name_ka from organization_types")
+
   let genders = {
     1: "მამრობითი",
     2: "მდედრობითი",
@@ -159,7 +161,7 @@ const getCustomerForm = async (req, res) => {
 
   res.status(200).json({
     status: "success",
-    data: { countries: countries?.rows, genders: genders, verifications: verifications},
+    data: { countries: countries?.rows, genders: genders, verifications: verifications, organization_types:organizationTypes?.rows},
   });
 };
 

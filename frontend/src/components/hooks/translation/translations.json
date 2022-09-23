@@ -48,14 +48,20 @@
         "phone_number":"ტელ.ნომერი",
         "email":"ელ.ფოსტა",
         "add_customer":"კლიენტის დამატება",
-        "verification_method":"ვერიფიკაციის მეთოდი",
+        "verification_method":"ვერიფიცირების მეთოდი",
         "verify":"ვერიფიკაცია",
         "input_verification_code":"შეიყვანე ვერიფიკაციის კოდი",
         "send_code":"კოდის გაგზავნა",
         "send_code_again":"ხელახლა კოდის გაგზავნა",
         "confirm":"დადასტურება",
         "customer_successfully_deleted":"კლიენტი წარმატებით წაიშალა",
-        "customer_delete_in_progress":"მიმდინარეობს კლიენტის წაშლა"
+        "customer_delete_in_progress":"მიმდინარეობს კლიენტის წაშლა",
+        "identification_number":"საიდენტიფიკაციო ნომერი",
+        "country":"ქვეყანა",
+        "organization_type":"ორგანიზაციის ტიპი",
+        "organization_name": "ორგანიზაციის დასახელება",
+        "bank_account_number":"საბანკო ანგარიშის ნომერი",
+        "legal_address":"იურიდიული მისამართი"
 
     }
 }
