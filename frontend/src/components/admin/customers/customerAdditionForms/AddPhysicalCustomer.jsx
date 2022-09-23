@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import translations from "../../../hooks/translation/translations.json";
-
+import FormatedNumberInput from '../../../inputs/FormatedNumberInput'
 const { Option } = Select;
 
 function AddPhysicalCustomer() {
@@ -257,7 +257,7 @@ function AddPhysicalCustomer() {
         validateStatus={errors?.phone_number && "error"}
         help={errors?.phone_number}
       >
-        <InputNumber controls={false} type="number" />
+        <FormatedNumberInput />
       </Form.Item>
 
       <Form.Item

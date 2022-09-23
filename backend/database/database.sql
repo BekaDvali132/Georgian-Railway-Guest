@@ -54,6 +54,7 @@ CREATE TABLE legal_customers(
     organization_type_id int NOT NULL REFERENCES organization_types(id),
     organization_name varchar(255) NOT NULL,
     bank_account_number varchar(255) NOT NULL,
+    phone_number text NOT NULL,
     legal_address text NOT NULL,
     email varchar(255) NOT NULL,
     password varchar(255) NOT NULL,

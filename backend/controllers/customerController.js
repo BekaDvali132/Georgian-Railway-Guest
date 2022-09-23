@@ -141,13 +141,67 @@ const setPhysicalCustomers = async (req, res) => {
   });
 };
 
+// @desc    Set Legal Customer
+// @route   POST /api/customers/legal
+// @access  Private
+const setLegalCustomer = async (req, res) => {
+  errorsObjectFormatter(req, res);
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.mapped() });
+  }
+
+  const {
+    country,
+    identification_number,
+    organization_type,
+    organization_name,
+    bank_account_number,
+    legal_address,
+    phone_number,
+    email,
+    password,
+  } = req.body;
+
+  // Hash password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  let newCustomer;
+
+  newCustomer = await pool.query(
+    "INSERT INTO legal_customers (country, identification_number, organization_type_id, organization_name, bank_account_number, legal_address, phone_number, email, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+    [
+      country,
+      identification_number,
+      organization_type,
+      organization_name,
+      bank_account_number,
+      legal_address,
+      phone_number,
+      email,
+      hashedPassword,
+    ]
+  );
+  
+  res.status(200).json({
+    status: "success",
+    data: newCustomer,
+  });
+};
+
 // @desc    Get CustomerForm
 // @route   Get /api/customers/form
 // @access  Private
 const getCustomerForm = async (req, res) => {
-  let countries = await pool.query("Select id,name_ka,country_phone_code from countries");
+  let countries = await pool.query(
+    "Select id,name_ka,country_phone_code from countries"
+  );
 
-  let organizationTypes = await pool.query("SELECT id,name_ka from organization_types")
+  let organizationTypes = await pool.query(
+    "SELECT id,name_ka from organization_types"
+  );
 
   let genders = {
     1: "მამრობითი",
@@ -155,13 +209,18 @@ const getCustomerForm = async (req, res) => {
   };
 
   let verifications = {
-    1: 'ელ.ფოსტით',
-    2: 'ტელ. ნომრით'
-  }
+    1: "ელ.ფოსტით",
+    2: "ტელ. ნომრით",
+  };
 
   res.status(200).json({
     status: "success",
-    data: { countries: countries?.rows, genders: genders, verifications: verifications, organization_types:organizationTypes?.rows},
+    data: {
+      countries: countries?.rows,
+      genders: genders,
+      verifications: verifications,
+      organization_types: organizationTypes?.rows,
+    },
   });
 };
 
@@ -178,7 +237,12 @@ const deletePhysicalCustomer = async (req, res) => {
       status: "success",
     });
   }
-  
 };
 
-module.exports = { getCustomers, setPhysicalCustomers, getCustomerForm, deletePhysicalCustomer };
+module.exports = {
+  getCustomers,
+  setPhysicalCustomers,
+  getCustomerForm,
+  deletePhysicalCustomer,
+  setLegalCustomer,
+};
