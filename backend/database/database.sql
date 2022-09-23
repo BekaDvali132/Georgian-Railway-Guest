@@ -60,3 +60,12 @@ CREATE TABLE legal_customers(
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE verification_codes(
+    id SERIAL PRIMARY KEY,
+    code text NOT NULL,
+    email text,
+    phone_number text,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    valid_until TIMESTAMP NOT NULL DEFAULT NOW() + INTERVAL '5 minutes'
+);

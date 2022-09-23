@@ -5,8 +5,6 @@ const port = process.env.PORT || 5000;
 
 const app = express();
 
-const { verifyEmail } = require('./functions/verifications')
-
 // middleware
 app.use(cors());
 
@@ -18,6 +16,6 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/countries", require("./routes/countryRoutes"));
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/customers', require('./routes/customerRoutes'))
-app.use('/api/verify', verifyEmail)
+app.use('/api/verify', require('./routes/verifyRoutes'))
 
 app.listen(port, () => console.log(`server started on port ${port}`));
