@@ -12,8 +12,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import { AdminContext } from "../../contexts/adminContext/adminContext";
-import useTranslation from "../../hooks/translation/useTranslation";
-import { TranslationContext } from "../../contexts/TranslationContext";
 import translations  from "../../hooks/translation/translations.json";
 
 const { Header, Sider, Content } = Layout;
@@ -23,8 +21,6 @@ function AdminRoute() {
   const [activeKey, setActiveKey] = useState();
   let navigate = useNavigate();
   const adminContext = useContext(AdminContext)
-  const {trans, currentLanguage} = useTranslation();
-  const {setCurrentLanguage} = useContext(TranslationContext)
 
   axios.interceptors.request.use(function (req){
     if(localStorage.getItem('accessToken')) {
@@ -91,8 +87,8 @@ function AdminRoute() {
             {
               key: "2",
               icon: <UsergroupAddOutlined />,
-              label: translations['ka']?.['physical/legal_individuals'],
-              onClick: ()=>(navigate('/admin/individuals'),setActiveKey(1))
+              label: translations['ka']?.['customers'],
+              onClick: ()=>(navigate('/admin/customers'),setActiveKey(1))
               
             },
             {
@@ -116,9 +112,9 @@ function AdminRoute() {
                 className: 'trigger',
                 onClick: () => setCollapsed(!collapsed)
             })}
-            {/* <div className="language-changer">
-            <div className={`language ${currentLanguage === 'ka' && 'active'}`} onClick={()=>{setCurrentLanguage('ka')}}>ქარ</div> / <div className={`language ${currentLanguage === 'en' && 'active'}`} onClick={()=>{setCurrentLanguage('en')}}>ENG</div>
-            </div>  */}
+            <div className="language-changer">
+            გამარჯობა {adminContext.user?.username}
+            </div>
         </Header>
         <Content
         className="site-layout-background"

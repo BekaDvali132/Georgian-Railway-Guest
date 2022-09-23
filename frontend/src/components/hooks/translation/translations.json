@@ -37,7 +37,17 @@
         "country_successfully_deleted":"ქვეყანა წარმატებით წაიშალა",
         "username":"დასახელება",
         "password":"პაროლი",
-        "physical/legal_individuals":"ფიზ./იურ. პირები"
+        "physical/legal_individuals":"ფიზ./იურ. პირები",
+        "customers":"კლიენტები",
+        "name":"სახელი",
+        "last_name":"გვარი",
+        "gender": "სქესი",
+        "citizenship":"მოქალაქეობა",
+        "personal_number":"პირადი ნომერი",
+        "passport_number":"პასპორტის ნომერი",
+        "phone_number":"ტელ.ნომერი",
+        "email":"ელ.ფოსტა",
+        "add_customer":"კლიენტის დამატება"
 
     }
 }

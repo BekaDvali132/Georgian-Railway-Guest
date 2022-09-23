@@ -18,7 +18,7 @@ const getCustomers = async (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
-      physical_customers: physicalCustomers?.rows
+      physical_customers: physicalCustomers?.rows,
     },
   });
 };
@@ -96,7 +96,6 @@ const setPhysicalCustomers = async (req, res) => {
       );
     }
   } else {
-
     !passport_number &&
       (error.passport_number =
         "საქართველოს მოქალაქისთვის პირადი ნომერი აუცილებელია");
@@ -142,4 +141,21 @@ const setPhysicalCustomers = async (req, res) => {
   });
 };
 
-module.exports = { getCustomers, setPhysicalCustomers };
+// @desc    Get CustomerForm
+// @route   Get /api/customers/form
+// @access  Private
+const getCustomerForm = async (req, res) => {
+  let countries = await pool.query("Select id,name_ka from countries");
+
+  let genders = {
+    1: "მამრობითი",
+    2: "მდედრობითი",
+  };
+
+  res.status(200).json({
+    status: "success",
+    data: { countries: countries?.rows, genders: genders },
+  });
+};
+
+module.exports = { getCustomers, setPhysicalCustomers, getCustomerForm };

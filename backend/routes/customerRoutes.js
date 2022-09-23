@@ -4,11 +4,13 @@ const { protect } = require("../middleware/authMiddleware");
 const {
   getCustomers,
   setPhysicalCustomers,
+  getCustomerForm
 } = require("../controllers/customerController");
 const { check,matchedData } = require("express-validator");
 const pool = require("../database/db");
 
 router.get("/", protect, getCustomers);
+router.get("/form", protect, getCustomerForm);
 router.post(
   "/physical",
   protect,
