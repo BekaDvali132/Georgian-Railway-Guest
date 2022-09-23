@@ -145,7 +145,7 @@ const setPhysicalCustomers = async (req, res) => {
 // @route   Get /api/customers/form
 // @access  Private
 const getCustomerForm = async (req, res) => {
-  let countries = await pool.query("Select id,name_ka from countries");
+  let countries = await pool.query("Select id,name_ka,country_phone_code from countries");
 
   let genders = {
     1: "მამრობითი",

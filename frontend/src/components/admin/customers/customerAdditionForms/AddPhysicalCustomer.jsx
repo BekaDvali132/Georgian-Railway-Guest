@@ -11,12 +11,14 @@ const { Option } = Select;
 function AddPhysicalCustomer() {
   const [formOptions, setFormOptions] = useState(null);
   const [form] = Form.useForm();
+  const [verifyForm] = Form.useForm();
   const [isGeorgian, setIsGeorgian] = useState(false);
   const [errors, setErrors] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [verifyCount, setVerifyCount] = useState(0);
 
   const getFormOptions = () => {
     axios.get("/api/customers/form").then((res) => {
@@ -55,43 +57,85 @@ function AddPhysicalCustomer() {
   };
 
   const sendCode = (method) => {
-
-    if (method === 1) {
-      
+    if (method == 1) {
+      axios
+        .post("/api/verify/email", { email: form.getFieldValue("email") })
+        .then((res) => {
+          if (res?.data.status == "success") {
+            setVerifyCount(30);
+            setOpen(true);
+          } else {
+            setErrors(res?.data?.errors);
+          }
+        });
     } else {
-      
     }
-   
+  };
+
+  useEffect(() => {
+    verifyCount > 0 && setTimeout(() => setVerifyCount(verifyCount - 1), 1000);
+  }, [verifyCount]);
+
+  const submitCode = () => {
+    axios
+      .post("/api/verify/check-email", {
+        email: form.getFieldValue("email"),
+        code: verifyForm.getFieldValue("code"),
+      })
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setOpen(false);
+          setIsVerified(true);
+          setVerifyCount(0);
+          setErrors(null);
+        } else {
+          setErrors(res?.data?.errors);
+        }
+      });
   };
 
   return (
     <Form layout="vertical" form={form} onFinish={onFinish}>
-
       <Modal
         open={open}
         title={translations["ka"]["verify"]}
         footer={null}
+        onCancel={() => setOpen(false)}
       >
-        <Form>
-            <Space direction="vertical" style={{width:'100%'}}>
-              <Form.Item
-                label={translations["ka"]["input_verification_code"]}
-                name={"verification_code"}
-                validateStatus={errors?.last_name && "error"}
-                help={errors?.last_name}
+        <Form onFinish={submitCode} form={verifyForm}>
+          <Space direction="vertical" style={{ width: "100%" }}>
+            <Form.Item
+              label={translations["ka"]["input_verification_code"]}
+              name={"code"}
+              validateStatus={errors?.code && "error"}
+              help={errors?.code}
+            >
+              <Input />
+            </Form.Item>
+            <Space style={{ justifyContent: "end", width: "100%" }}>
+              <Button
+                type="link"
+                htmlType="button"
+                disabled={isVerified}
+                loading={verifyCount > 0}
+                onClick={() =>
+                  sendCode(form.getFieldValue("verification_method"))
+                }
               >
-                <Input />
-              </Form.Item>
-              <Space style={{justifyContent:'end', width:'100%'}}>
-                <Button type="link" htmlType="button" disabled={isVerified}>
-                  {translations["ka"]["send_code_again"]}
-                </Button>
-                <Button type="primary" htmlType="submit" disabled={isVerified}  style={{marginLeft:'auto'}}>
-                  {translations["ka"]["confirm"]}
-                </Button>
-              </Space>
+                {verifyCount > 0 && verifyCount}{" "}
+                {translations["ka"]["send_code_again"]}
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                disabled={isVerified}
+                style={{ marginLeft: "auto" }}
+              >
+                {translations["ka"]["confirm"]}
+              </Button>
             </Space>
-          </Form>
+          </Space>
+        </Form>
       </Modal>
 
       <Form.Item
@@ -170,19 +214,41 @@ function AddPhysicalCustomer() {
         help={errors?.[isGeorgian ? "personal_number" : "passport_number"]}
       >
         {isGeorgian ? (
-          <InputNumber controls={false} type="number" />
+          <InputNumber
+            formatter={(value) => {
+              if (value) {
+                return `0${value}`.replace(/0*/, "0");
+              }
+              return value;
+            }}
+            controls={false}
+            type="number"
+          />
         ) : (
           <Input />
         )}
       </Form.Item>
-
       <Form.Item
         label={translations["ka"]["country_phone_code"] + "*"}
         name={"country_phone_code"}
+        initialValue={
+          formOptions?.countries?.find(
+            (country) => country?.name_ka === "საქართველო"
+          )?.id || ""
+        }
         validateStatus={errors?.country_phone_code && "error"}
         help={errors?.country_phone_code}
       >
-        <InputNumber controls={false} type="number" />
+        <Select
+          placeholder={translations["ka"]["country_phone_code"]}
+          allowClear
+        >
+          {formOptions?.countries?.map((country) => (
+            <Option key={country?.id} value={country?.id}>
+              {country?.country_phone_code}
+            </Option>
+          ))}
+        </Select>
       </Form.Item>
 
       <Form.Item
@@ -200,7 +266,7 @@ function AddPhysicalCustomer() {
         validateStatus={errors?.email && "error"}
         help={errors?.email}
       >
-        <Input />
+        <Input onChange={()=>setIsVerified(false)}/>
       </Form.Item>
 
       <Form.Item
@@ -233,17 +299,22 @@ function AddPhysicalCustomer() {
           type="link"
           htmlType="button"
           disabled={isVerified}
-          onClick={() =>{
-              sendCode();
-              setOpen(true)
-            }}
+          onClick={() => {
+            sendCode(form.getFieldValue("verification_method"));
+          }}
+          loading={verifyCount > 0}
         >
-          {translations["ka"]["send_code"]}
+          {verifyCount > 0 && verifyCount} {translations["ka"]["send_code"]}
         </Button>
       </Space>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" loading={isLoading}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={isLoading}
+          disabled={!isVerified}
+        >
           {translations["ka"]["submit"]}
         </Button>
       </Form.Item>

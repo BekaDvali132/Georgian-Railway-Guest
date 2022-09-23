@@ -53,7 +53,9 @@
         "input_verification_code":"შეიყვანე ვერიფიკაციის კოდი",
         "send_code":"კოდის გაგზავნა",
         "send_code_again":"ხელახლა კოდის გაგზავნა",
-        "confirm":"დადასტურება"
+        "confirm":"დადასტურება",
+        "customer_successfully_deleted":"კლიენტი წარმატებით წაიშალა",
+        "customer_delete_in_progress":"მიმდინარეობს კლიენტის წაშლა"
 
     }
 }
