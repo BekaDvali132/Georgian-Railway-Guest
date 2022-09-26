@@ -11,6 +11,7 @@ import {
 import { TranslationContextProvider } from "./components/contexts/TranslationContext";
 import Customers from "./components/admin/customers/Customers";
 import AddCustomers from "./components/admin/customers/AddCustomers";
+import EditPhysicalCustomers from "./components/admin/customers/customerEditForms/EditPhysicalCustomers";
 
 function App() {
   return (
@@ -45,6 +46,11 @@ function App() {
                   exact
                   path="/admin/customers/add"
                   element={<AddCustomers />}
+                />
+                <Route
+                  exact
+                  path="/admin/customers/physical/:id/edit"
+                  element={<EditPhysicalCustomers />}
                 />
 
               </Route>

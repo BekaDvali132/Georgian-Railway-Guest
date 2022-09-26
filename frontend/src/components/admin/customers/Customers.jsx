@@ -53,11 +53,6 @@ const physicalCustomerColumns = [
     key: "email",
   },
   {
-    title: translations['ka']['edit'],
-    dataIndex: "edit",
-    key: "edit",
-  },
-  {
     title: translations['ka']['delete'],
     dataIndex: "delete",
     key: "delete",
@@ -104,11 +99,6 @@ const legalCustomerColumns = [
     title: translations['ka']['email'],
     dataIndex: "email",
     key: "email",
-  },
-  {
-    title: translations['ka']['edit'],
-    dataIndex: "edit",
-    key: "edit",
   },
   {
     title: translations['ka']['delete'],
@@ -179,7 +169,7 @@ function Customers() {
           country_phone_code: customer?.country_phone_code,
           phone_number: customer?.phone_number,
           email: customer?.email,
-          edit: <Button> {translations['ka']['edit']}</Button>,
+          // edit: <Button onClick={()=>navigate(`/admin/customers/physical/${customer.id}/edit`)}> {translations['ka']['edit']}</Button>,
           delete: <Button
           type="danger"
           onClick={() => checkIfDelete(customer?.id, customer?.name_ka, false)}
@@ -208,7 +198,7 @@ function Customers() {
           country_phone_code: customer?.country_phone_code,
           phone_number: customer?.phone_number,
           email: customer?.email,
-          edit: <Button> {translations['ka']['edit']}</Button>,
+          // edit: <Button onClick={()=>navigate(`/admin/customers/legal/${customer.id}/edit`)}> {translations['ka']['edit']}</Button>,
           delete: <Button
           type="danger"
           onClick={() => checkIfDelete(customer?.id, customer?.organization_name, true)}

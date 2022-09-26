@@ -28,10 +28,10 @@ const getCustomers = async (req, res) => {
   });
 };
 
-// @desc    Set Customers
+// @desc    Register legal Customers
 // @route   POST /api/customers
 // @access  Private
-const setPhysicalCustomers = async (req, res) => {
+const registerPhysicalCustomers = async (req, res) => {
   errorsObjectFormatter(req, res);
   const errors = validationResult(req);
 
@@ -146,10 +146,10 @@ const setPhysicalCustomers = async (req, res) => {
   });
 };
 
-// @desc    Set Legal Customer
+// @desc    Register Legal Customer
 // @route   POST /api/customers/legal
 // @access  Private
-const setLegalCustomer = async (req, res) => {
+const registerLegalCustomer = async (req, res) => {
   errorsObjectFormatter(req, res);
   const errors = validationResult(req);
 
@@ -229,6 +229,22 @@ const getCustomerForm = async (req, res) => {
   });
 };
 
+// @desc    Get Physical Customer
+// @route   Get /api/customers/physical/:id
+// @access  Private
+const getPhysicalCustomer = async (req, res) => {
+  const physicalCustomer = await pool.query(
+    `Select * FROM physical_customers WHERE id = ${req.params.id}`
+  );
+
+  if (physicalCustomer) {
+    res.status(200).json({
+      status: "success",
+      data: physicalCustomer?.rows?.[0]
+    });
+  }
+};
+
 // @desc    Delete Physical Customer
 // @route   Delete /api/customers/physical
 // @access  Private
@@ -261,9 +277,10 @@ const deleteLegalCustomer = async (req, res) => {
 
 module.exports = {
   getCustomers,
-  setPhysicalCustomers,
+  registerPhysicalCustomers,
   getCustomerForm,
   deletePhysicalCustomer,
-  setLegalCustomer,
-  deleteLegalCustomer
+  registerLegalCustomer,
+  deleteLegalCustomer,
+  getPhysicalCustomer
 };

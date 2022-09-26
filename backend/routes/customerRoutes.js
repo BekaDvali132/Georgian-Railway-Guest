@@ -3,13 +3,14 @@ const router = express.Router();
 const { protect } = require("../middleware/authMiddleware");
 const {
   getCustomers,
-  setPhysicalCustomers,
+  registerPhysicalCustomers,
   getCustomerForm,
   deletePhysicalCustomer,
-  setLegalCustomer,
-  deleteLegalCustomer
+  registerLegalCustomer,
+  deleteLegalCustomer,
+  getPhysicalCustomer
 } = require("../controllers/customerController");
-const { check,matchedData } = require("express-validator");
+const { check } = require("express-validator");
 const pool = require("../database/db");
 
 router.get("/", protect, getCustomers);
@@ -43,7 +44,7 @@ router.post(
     }
   }),
   check("password").notEmpty().withMessage("კლიენტის პაროლი აუცილებელია"),
-  setPhysicalCustomers
+  registerPhysicalCustomers
 );
 
 // Set Legal Customer
@@ -74,8 +75,10 @@ router.post(
   }),
   check('phone_number').notEmpty().withMessage('ტელეფონის ნომერი აუცილებელია'),
   check("password").notEmpty().withMessage("კლიენტის პაროლი აუცილებელია"),
-  setLegalCustomer
+  registerLegalCustomer
 );
+
+router.get('/physical/:id',protect,getPhysicalCustomer)
 
 router.delete('/physical/:id', protect, deletePhysicalCustomer)
 router.delete('/legal/:id', protect, deleteLegalCustomer)

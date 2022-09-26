@@ -1,11 +1,17 @@
-import { Input, InputNumber } from "antd";
+import { Form, Input, InputNumber } from "antd";
 import React from "react";
 import { useState } from "react";
 
-function FormatedNumberInput() {
+function FormatedNumberInput({name, label, errorMessage}) {
   const re = /^[0-9\b]+$/;
   const [value, setValue] = useState("");
   return (
+    <Form.Item
+        label={label}
+        name={name}
+        validateStatus={errorMessage && "error"}
+        help={errorMessage}
+      >
     <Input
       onChange={(e) => {
         if (e.target.value === "" || re.test(e.target.value)) {
@@ -14,6 +20,7 @@ function FormatedNumberInput() {
       }}
       value={value}
     />
+    </Form.Item>
   );
 }
 

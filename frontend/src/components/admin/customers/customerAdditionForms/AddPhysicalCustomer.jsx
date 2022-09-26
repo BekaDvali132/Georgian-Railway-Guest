@@ -5,7 +5,8 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import translations from "../../../hooks/translation/translations.json";
-import FormatedNumberInput from '../../../inputs/FormatedNumberInput'
+import FormatedNumberInput from "../../../inputs/FormatedNumberInput";
+
 const { Option } = Select;
 
 function AddPhysicalCustomer() {
@@ -200,34 +201,22 @@ function AddPhysicalCustomer() {
         </>
       )}
 
+      {isGeorgian?
+        <FormatedNumberInput label={translations['ka']['personal_number'] + "*"} name={'personal_number'} errorMessage={errors?.personal_number}/>
+      :
       <Form.Item
         label={
           translations["ka"][
-            isGeorgian ? "personal_number" : "passport_number"
+            "passport_number"
           ] + "*"
         }
-        name={isGeorgian ? "personal_number" : "passport_number"}
-        validateStatus={
-          errors?.[isGeorgian ? "personal_number" : "passport_number"] &&
-          "error"
-        }
-        help={errors?.[isGeorgian ? "personal_number" : "passport_number"]}
+        name={"passport_number"}
+        validateStatus={"passport_number"}
+        help={errors?.["passport_number"]}
       >
-        {isGeorgian ? (
-          <InputNumber
-            formatter={(value) => {
-              if (value) {
-                return `0${value}`.replace(/0*/, "0");
-              }
-              return value;
-            }}
-            controls={false}
-            type="number"
-          />
-        ) : (
+
           <Input />
-        )}
-      </Form.Item>
+      </Form.Item>}
       <Form.Item
         label={translations["ka"]["country_phone_code"] + "*"}
         name={"country_phone_code"}
@@ -251,14 +240,7 @@ function AddPhysicalCustomer() {
         </Select>
       </Form.Item>
 
-      <Form.Item
-        label={translations["ka"]["phone_number"] + "*"}
-        name={"phone_number"}
-        validateStatus={errors?.phone_number && "error"}
-        help={errors?.phone_number}
-      >
-        <FormatedNumberInput />
-      </Form.Item>
+      <FormatedNumberInput controls={false} type="number" label={translations['ka']['phone_number'] + "*"} name={'phone_number'} errorMessage={errors?.phone_number}/>
 
       <Form.Item
         label={translations["ka"]["email"] + "*"}
