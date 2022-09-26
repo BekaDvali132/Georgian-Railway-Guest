@@ -74,12 +74,17 @@ function AddPhysicalCustomer() {
           setIsVerified(true);
           setVerifyCount(0);
           setErrors(null);
+          verifyForm.resetFields()
         } else {
           setErrors(res?.data?.errors);
         }
       });
   };
 
+  const sendSmsCode = () => {
+
+  };
+  
   return (
     <Form layout="vertical" form={form} onFinish={onFinish}>
       <Modal
@@ -196,23 +201,22 @@ function AddPhysicalCustomer() {
         name={"legal_address"}
         validateStatus={errors?.legal_address && "error"}
         help={errors?.legal_address}
+        
       >
         <Input />
       </Form.Item>
 
-      <Form.Item
-        label={translations["ka"]["phone_number"] + "*"}
-        name={"phone_number"}
-        validateStatus={errors?.phone_number && "error"}
-        help={errors?.phone_number}
-      >
+      
         <Space >
-          <FormatedNumberInput style={{ width: "300px" }}/>
-          <Button type="link" htmlType="button">
+          <FormatedNumberInput form={form} style={{ width: "300px" }} name={"phone_number"} label={translations["ka"]["phone_number"] + "*"} errorMessage={errors?.phone_number}/>
+          <Button type="link" htmlType="button"
+            onClick={()=>{
+              sendSmsCode()
+            }}
+          >
             {translations["ka"]["send_code"]}
           </Button>
         </Space>
-      </Form.Item>
 
       <Form.Item
         label={translations["ka"]["email"] + "*"}

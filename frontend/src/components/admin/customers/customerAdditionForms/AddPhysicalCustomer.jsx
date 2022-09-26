@@ -89,6 +89,7 @@ function AddPhysicalCustomer() {
           setIsVerified(true);
           setVerifyCount(0);
           setErrors(null);
+          verifyForm.resetFields()
         } else {
           setErrors(res?.data?.errors);
         }
@@ -202,7 +203,7 @@ function AddPhysicalCustomer() {
       )}
 
       {isGeorgian?
-        <FormatedNumberInput label={translations['ka']['personal_number'] + "*"} name={'personal_number'} errorMessage={errors?.personal_number}/>
+        <FormatedNumberInput form={form} label={translations['ka']['personal_number'] + "*"} name={'personal_number'} errorMessage={errors?.personal_number}/>
       :
       <Form.Item
         label={
@@ -211,7 +212,7 @@ function AddPhysicalCustomer() {
           ] + "*"
         }
         name={"passport_number"}
-        validateStatus={"passport_number"}
+        validateStatus={errors?.["passport_number"] && "error"}
         help={errors?.["passport_number"]}
       >
 
@@ -240,7 +241,7 @@ function AddPhysicalCustomer() {
         </Select>
       </Form.Item>
 
-      <FormatedNumberInput controls={false} type="number" label={translations['ka']['phone_number'] + "*"} name={'phone_number'} errorMessage={errors?.phone_number}/>
+      <FormatedNumberInput form={form} controls={false} type="number" label={translations['ka']['phone_number'] + "*"} name={'phone_number'} errorMessage={errors?.phone_number}/>
 
       <Form.Item
         label={translations["ka"]["email"] + "*"}

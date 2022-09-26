@@ -4,6 +4,10 @@ const cors = require("cors");
 const port = process.env.PORT || 5000;
 
 const app = express();
+let compression = require('compression');
+
+// compress responses
+app.use(compression())
 
 // middleware
 app.use(cors());

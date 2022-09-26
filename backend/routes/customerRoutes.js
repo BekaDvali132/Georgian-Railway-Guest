@@ -39,9 +39,14 @@ router.post(
   check("last_name").notEmpty().withMessage("კლიენტის გვარი აუცილებელია"),
   check("gender").notEmpty().withMessage("კლიენტის სქესი აუცილებელია"),
   check("citizenship").notEmpty().withMessage("კლიენტის მოქალაქეობა აუცილებელია"),
-  // check("personal_number").notEmpty().withMessage("კლიენტის პირადი ნომერი აუცილებელია"),
   check("country_phone_code").notEmpty().withMessage("კლიენტის ქვეყნის სატელეფონო კოდი აუცილებელია"),
-  check('phone_number').notEmpty().withMessage("კლიენტის ტელეფონის ნომერი აუცილებელია").isMobilePhone().withMessage('ტელეფონის ნომერი არასწორი ფორმატითაა ჩაწერილი'),
+  check('phone_number').notEmpty().withMessage("კლიენტის ტელეფონის ნომერი აუცილებელია").isMobilePhone().withMessage('ტელეფონის ნომერი არასწორი ფორმატითაა ჩაწერილი').custom(async value => {
+    const phoneNumberExists = await pool.query("select email from physical_customers where phone_number = $1 union select email from legal_customers where phone_number = $1",[value])
+
+    if (phoneNumberExists?.rows?.[0]) {
+      return Promise.reject("მითითებული ტელეფონის ნომერი უკვე დარეგისტრირებულია");
+    }
+  }),
   check("email").notEmpty().withMessage("კლიენტის ელ.ფოსტა აუცილებელია").isEmail().withMessage('ელ.ფოსტა არასწორი ფორმატითაა მითითებული').custom(async (value) => {
     const physicalEmailExists = await pool.query(
       "SELECT * FROM physical_customers WHERE email = $1",
@@ -58,6 +63,28 @@ router.post(
     }
   }),
   check("password").notEmpty().withMessage("კლიენტის პაროლი აუცილებელია"),
+  check('personal_number').custom(async (value, { req, location, path }) => {
+    if(req?.body.citizenship && !value){
+    const country = await pool.query('SELECT * from countries where id = $1',[req?.body.citizenship])
+
+    return country?.rows?.[0]?.name_ka === 'საქართველო' ? Promise.reject("საქართველოს მოქალაქისთვის პირადი ნომერი აუცილებელია") : '';
+    } else if(value) {
+      const personalNumberExists = await pool.query("select personal_number from physical_customers where personal_number = $1",[value])
+
+      return personalNumberExists?.rows?.[0] ? Promise.reject("პირადი ნომერი დაკავებულია") : '';
+    }
+  }),
+  check('passport_number').custom(async (value, { req, location, path }) => {
+    if(req?.body.citizenship && !value){
+    const country = await pool.query('SELECT * from countries where id = $1',[req?.body.citizenship])
+
+    return country?.rows?.[0]?.name_ka !== 'საქართველო' ? Promise.reject("პასპორტის ნომერი აუცილებელია") : '';
+    } else if(value) {
+      const passportNumberExists = await pool.query("select passport_number from physical_customers where passport_number = $1",[value])
+
+      return passportNumberExists?.rows?.[0] ? Promise.reject("პასპორტის ნომერი დაკავებულია") : '';
+    }
+  }),
   registerPhysicalCustomers
 );
 
@@ -87,7 +114,13 @@ router.post(
       return Promise.reject("მითითებული ელ.ფოსტით კლიენტი უკვე არსებობს");
     }
   }),
-  check('phone_number').notEmpty().withMessage('ტელეფონის ნომერი აუცილებელია'),
+  check('phone_number').notEmpty().withMessage('ტელეფონის ნომერი აუცილებელია').custom(async value => {
+    const phoneNumberExists = await pool.query("select email from physical_customers where phone_number = $1 union select email from legal_customers where phone_number = $1",[value])
+
+    if (phoneNumberExists?.rows?.[0]) {
+      return Promise.reject("მითითებული ტელეფონის ნომერი უკვე დარეგისტრირებულია");
+    }
+  }),
   check("password").notEmpty().withMessage("კლიენტის პაროლი აუცილებელია"),
   registerLegalCustomer
 );

@@ -3,6 +3,7 @@ const { errorsObjectFormatter } = require("../middleware/errorsFormatter");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const e = require("express");
 
 // @desc    Get Customers
 // @route   GET /api/customers
@@ -17,9 +18,7 @@ const getCustomers = async (req, res) => {
   const organizationTypes = await pool.query(
     "SELECT * from organization_types"
   );
-  const countries = await pool.query(
-    "SELECT * from countries"
-  );
+  const countries = await pool.query("SELECT * from countries");
 
   res.status(200).json({
     status: "success",
@@ -27,7 +26,7 @@ const getCustomers = async (req, res) => {
       physical_customers: physicalCustomers?.rows,
       legal_customers: legalCustomers?.rows,
       organization_types: organizationTypes?.rows,
-      countries: countries?.rows
+      countries: countries?.rows,
     },
   });
 };
@@ -42,8 +41,6 @@ const registerPhysicalCustomers = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.mapped() });
   }
-
-  const error = {};
 
   const {
     first_name,
@@ -68,81 +65,20 @@ const registerPhysicalCustomers = async (req, res) => {
 
   let newCustomer;
 
-  if (country.rows?.[0]?.name_ka === "საქართველო") {
-    !personal_number &&
-      (error.personal_number =
-        "საქართველოს მოქალაქისთვის პირადი ნომერი აუცილებელია");
-    if (error.personal_number) {
-      return res.status(200).json({
-        errors: error,
-      });
-    } else {
-      const personExists = await pool.query(
-        "Select * from physical_customers where personal_number = $1",
-        [personal_number]
-      );
-
-      if (personExists.rows?.[0]) {
-        return res.status(200).json({
-          errors: {
-            personal_number: "კლიენტი ამ პირადი ნომრით უკვე არსებობს",
-          },
-        });
-      }
-      newCustomer = await pool.query(
-        "INSERT INTO physical_customers (first_name, last_name, gender, citizenship, personal_number, country_phone_code, phone_number, email, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-        [
-          first_name,
-          last_name,
-          gender,
-          citizenship,
-          personal_number,
-          country_phone_code,
-          phone_number,
-          email,
-          hashedPassword,
-        ]
-      );
-    }
-  } else {
-    !passport_number &&
-      (error.passport_number =
-        "საქართველოს მოქალაქისთვის პირადი ნომერი აუცილებელია");
-
-    if (error.personal_number) {
-      return res.status(200).json({
-        errors: error,
-      });
-    } else {
-      const personExists = await pool.query(
-        "Select * from physical_customers where passport_number = $1",
-        [passport_number]
-      );
-
-      if (personExists.rows?.[0]) {
-        return res.status(200).json({
-          errors: {
-            passport_number: "კლიენტი ამ პასპორტის ნომრით უკვე არსებობს",
-          },
-        });
-      }
-
-      newCustomer = await pool.query(
-        "INSERT INTO physical_customers (first_name, last_name, gender, citizenship, passport_number, country_phone_code, phone_number, email, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-        [
-          first_name,
-          last_name,
-          gender,
-          citizenship,
-          passport_number,
-          country_phone_code,
-          phone_number,
-          email,
-          hashedPassword,
-        ]
-      );
-    }
-  }
+    newCustomer = await pool.query(
+      `INSERT INTO physical_customers (first_name, last_name, gender, citizenship, ${country.rows?.[0]?.name_ka === "საქართველო" ? 'personal_number' : 'passport_number'}, country_phone_code, phone_number, email, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        first_name,
+        last_name,
+        gender,
+        citizenship,
+        country.rows?.[0]?.name_ka === "საქართველო" ? personal_number : passport_number,
+        country_phone_code,
+        phone_number,
+        email,
+        hashedPassword,
+      ]
+    );
 
   res.status(200).json({
     status: "success",
@@ -193,7 +129,7 @@ const registerLegalCustomer = async (req, res) => {
       hashedPassword,
     ]
   );
-  
+
   res.status(200).json({
     status: "success",
     data: newCustomer,
@@ -244,7 +180,7 @@ const getPhysicalCustomer = async (req, res) => {
   if (physicalCustomer) {
     res.status(200).json({
       status: "success",
-      data: physicalCustomer?.rows?.[0]
+      data: physicalCustomer?.rows?.[0],
     });
   }
 };
@@ -288,7 +224,7 @@ const getCurrentCustomer = (req, res) => {
     user: req?.user,
     token: generateToken(req?.user?.id),
   });
-}
+};
 
 // @desc    login Customer
 // @route   Post /api/customers/login
@@ -300,19 +236,21 @@ const loginCustomer = async (req, res) => {
     return res.status(400).json({ errors: errors.mapped() });
   }
 
-  let customerType = 'physical';
+  let customerType = "physical";
 
   const { email, password } = req.body;
 
-  let customer = await pool.query("SELECT * FROM physical_customers WHERE email=$1", [
-    email,
-  ]);
+  let customer = await pool.query(
+    "SELECT * FROM physical_customers WHERE email=$1",
+    [email]
+  );
 
   if (!customer?.rows?.[0]) {
-    customerType = 'legal';
-    customer = await pool.query("SELECT * FROM legal_customers WHERE email=$1", [
-      email,
-    ]);
+    customerType = "legal";
+    customer = await pool.query(
+      "SELECT * FROM legal_customers WHERE email=$1",
+      [email]
+    );
   }
 
   if (await bcrypt.compare(password, customer?.rows?.[0]?.password)) {
@@ -334,8 +272,7 @@ const loginCustomer = async (req, res) => {
       },
     });
   }
-  
-}
+};
 
 // Generate JWT
 const generateToken = (id) => {
@@ -351,5 +288,5 @@ module.exports = {
   deleteLegalCustomer,
   getPhysicalCustomer,
   getCurrentCustomer,
-  loginCustomer
+  loginCustomer,
 };

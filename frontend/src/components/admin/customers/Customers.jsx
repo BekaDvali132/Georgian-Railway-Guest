@@ -165,7 +165,7 @@ function Customers() {
           name: customer?.first_name,
           last_name: customer?.last_name,
           gender: customer?.gender === 1 ? 'მამრობითი' : 'მდედრობით',
-          citizenship: customer?.citizenship,
+          citizenship: countries?.find(country=> country.id === customer?.citizenship)?.name_ka,
           personal_number: customer?.personal_number,
           passport_number: customer?.passport_number,
           country_phone_code: customer?.country_phone_code,
