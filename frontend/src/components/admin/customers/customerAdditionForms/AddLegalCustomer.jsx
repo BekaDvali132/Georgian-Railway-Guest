@@ -199,47 +199,43 @@ function AddPhysicalCustomer() {
       >
         <Input />
       </Form.Item>
-      
-      <Space>
+
       <Form.Item
         label={translations["ka"]["phone_number"] + "*"}
         name={"phone_number"}
         validateStatus={errors?.phone_number && "error"}
         help={errors?.phone_number}
-        style={{width:'300px'}}
       >
-        <FormatedNumberInput />
-      </Form.Item>
-      <Button
-          type="link"
-          htmlType="button"
-        >
+        <Space >
+          <FormatedNumberInput style={{ width: "300px" }}/>
+          <Button type="link" htmlType="button">
             {translations["ka"]["send_code"]}
-        </Button>
+          </Button>
         </Space>
+      </Form.Item>
 
-      <Space>
-        <Form.Item
-          label={translations["ka"]["email"] + "*"}
-          name={"email"}
-          validateStatus={errors?.email && "error"}
-          help={errors?.email}
-          style={{width:'300px'}}
-        >
-          <Input onChange={() => setIsVerified(false)} />
-        </Form.Item>
-        <Button
-          type="link"
-          htmlType="button"
-          disabled={isVerified}
-          onClick={() => {
-            sendCode(form.getFieldValue("verification_method"));
-          }}
-          loading={verifyCount > 0}
-        >
-          {verifyCount > 0 && verifyCount} {translations["ka"]["send_code"]}
-        </Button>
-      </Space>
+      <Form.Item
+        label={translations["ka"]["email"] + "*"}
+        name={"email"}
+        validateStatus={errors?.email && "error"}
+        help={errors?.email}
+      >
+        <Space>
+          <Input onChange={() => setIsVerified(false)} style={{ width: "300px" }}/>
+          <Button
+            type="link"
+            htmlType="button"
+            disabled={isVerified}
+            onClick={() => {
+              sendCode(1);
+            }}
+            loading={verifyCount > 0}
+          >
+            {verifyCount > 0 && verifyCount} {translations["ka"]["send_code"]}
+          </Button>
+        </Space>
+      </Form.Item>
+
       <Form.Item
         label={translations["ka"]["password"] + "*"}
         name={"password"}

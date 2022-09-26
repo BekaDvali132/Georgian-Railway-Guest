@@ -2,7 +2,7 @@ import { Form, Input, InputNumber } from "antd";
 import React from "react";
 import { useState } from "react";
 
-function FormatedNumberInput({name, label, errorMessage}) {
+function FormatedNumberInput({name, label, errorMessage, style}) {
   const re = /^[0-9\b]+$/;
   const [value, setValue] = useState("");
   return (
@@ -11,6 +11,7 @@ function FormatedNumberInput({name, label, errorMessage}) {
         name={name}
         validateStatus={errorMessage && "error"}
         help={errorMessage}
+        style = {style ? style : {}}
       >
     <Input
       onChange={(e) => {

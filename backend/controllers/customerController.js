@@ -17,13 +17,17 @@ const getCustomers = async (req, res) => {
   const organizationTypes = await pool.query(
     "SELECT * from organization_types"
   );
+  const countries = await pool.query(
+    "SELECT * from countries"
+  );
 
   res.status(200).json({
     status: "success",
     data: {
       physical_customers: physicalCustomers?.rows,
       legal_customers: legalCustomers?.rows,
-      organization_types: organizationTypes?.rows
+      organization_types: organizationTypes?.rows,
+      countries: countries?.rows
     },
   });
 };
@@ -275,6 +279,69 @@ const deleteLegalCustomer = async (req, res) => {
   }
 };
 
+// @desc    Get logged Customer
+// @route   Get /api/customers/me
+// @access  Private
+const getCurrentCustomer = (req, res) => {
+  res.status(200).json({
+    status: "success",
+    user: req?.user,
+    token: generateToken(req?.user?.id),
+  });
+}
+
+// @desc    login Customer
+// @route   Post /api/customers/login
+// @access  Public
+const loginCustomer = async (req, res) => {
+  errorsObjectFormatter(req, res);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.mapped() });
+  }
+
+  let customerType = 'physical';
+
+  const { email, password } = req.body;
+
+  let customer = await pool.query("SELECT * FROM physical_customers WHERE email=$1", [
+    email,
+  ]);
+
+  if (!customer?.rows?.[0]) {
+    customerType = 'legal';
+    customer = await pool.query("SELECT * FROM legal_customers WHERE email=$1", [
+      email,
+    ]);
+  }
+
+  if (await bcrypt.compare(password, customer?.rows?.[0]?.password)) {
+    res.status(200).json({
+      status: "success",
+      data: {
+        user: {
+          first_name: customer?.rows?.[0]?.first_name,
+          last_name: customer?.rows?.[0]?.last_name,
+          email: customer?.rows?.[0]?.email,
+        },
+        token: generateToken(customer?.rows?.[0]?.id),
+      },
+    });
+  } else {
+    res.status(400).json({
+      errors: {
+        password: "პაროლი არასწორია",
+      },
+    });
+  }
+  
+}
+
+// Generate JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
+
 module.exports = {
   getCustomers,
   registerPhysicalCustomers,
@@ -282,5 +349,7 @@ module.exports = {
   deletePhysicalCustomer,
   registerLegalCustomer,
   deleteLegalCustomer,
-  getPhysicalCustomer
+  getPhysicalCustomer,
+  getCurrentCustomer,
+  loginCustomer
 };

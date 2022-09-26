@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { protect } = require("../middleware/authMiddleware");
+const { protect, protectUser } = require("../middleware/authMiddleware");
 const {
   getCustomers,
   registerPhysicalCustomers,
@@ -8,12 +8,26 @@ const {
   deletePhysicalCustomer,
   registerLegalCustomer,
   deleteLegalCustomer,
-  getPhysicalCustomer
+  getPhysicalCustomer,
+  getCurrentCustomer,
+  loginCustomer
 } = require("../controllers/customerController");
 const { check } = require("express-validator");
 const pool = require("../database/db");
 
 router.get("/", protect, getCustomers);
+router.get("/me", protectUser, getCurrentCustomer);
+
+router.post("/login",
+check("email").notEmpty().withMessage("ელ.ფოსტა აუცილებელია").custom(async value => {
+  const clientExists = await pool.query("select email from physical_customers where email = $1 union select email from legal_customers where email = $1",[value])
+
+  if (!clientExists?.rows?.[0]) {
+    return Promise.reject("მითითებული ელ.ფოსტა არ არის დარეგისტრირებული");
+  }
+}),
+check("password").notEmpty().withMessage("პაროლი აუცილებელია"),
+loginCustomer);
 
 router.get("/form", protect, getCustomerForm);
 

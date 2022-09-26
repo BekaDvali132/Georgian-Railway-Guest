@@ -113,6 +113,7 @@ function Customers() {
   const [legalCustomers, setLegalCustomers] = useState([]);
   const [organizationTypes, setOrganizationTypes] = useState(null);
   const [render, setRender] = useState(false)
+  const [countries, setCoutries] = useState([])
 
   useEffect(()=>{
     axios.get('/api/customers').then(res=>{
@@ -120,6 +121,7 @@ function Customers() {
         setPhysicalCustomers(res?.data?.data?.physical_customers)
         setLegalCustomers(res?.data?.data?.legal_customers)
         setOrganizationTypes(res?.data?.data?.organization_types)
+        setCoutries(res?.data?.data?.countries)
       }
     })
 
@@ -172,7 +174,7 @@ function Customers() {
           // edit: <Button onClick={()=>navigate(`/admin/customers/physical/${customer.id}/edit`)}> {translations['ka']['edit']}</Button>,
           delete: <Button
           type="danger"
-          onClick={() => checkIfDelete(customer?.id, customer?.name_ka, false)}
+          onClick={() => checkIfDelete(customer?.id, customer?.first_name, false)}
         >
           {translations['ka']['delete']}
         </Button>
@@ -189,7 +191,7 @@ function Customers() {
       dataSource={legalCustomers?.map((customer) => {
         return {
           key: customer?.id,
-          country: customer?.country,
+          country: countries?.find(country=> country.id === customer?.country)?.name_ka,
           identification_number: customer?.identification_number,
           organization_type: organizationTypes?.find(type=>type.id === customer?.organization_type_id)?.name_ka,
           organization_name: customer?.organization_name,
