@@ -22,6 +22,26 @@ const getOrganizationTypes = async (req, res) => {
   });
 };
 
+// @desc    Set Organization type
+// @route   POST /api/organization-types
+// @access  Private
+const setOrganizations = async (req, res) => {
+  errorsObjectFormatter(req, res);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.mapped() });
+  }
+
+  const { name_ka, name_en, name_ru } = req.body;
+
+  let newType = await pool.query("INSERT INTO organization_types (name_ka, name_en, name_ru) VALUES ($1, $2, $3)",[name_ka,name_en,name_ru]);
+
+  res.status(200).json({
+    status: "success",
+  });
+
+}
+
 // @desc    Delete Organization type
 // @route   DELETE /api/organization-types/:id
 // @access  Private
@@ -35,4 +55,4 @@ const deleteOrganizationType = async (req, res) => {
   });
 };
 
-module.exports = { getOrganizationTypes, deleteOrganizationType };
+module.exports = { getOrganizationTypes, deleteOrganizationType, setOrganizations };
