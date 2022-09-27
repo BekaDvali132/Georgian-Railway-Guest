@@ -12,7 +12,7 @@ import AddCustomers from "./components/admin/customers/AddCustomers";
 import EditPhysicalCustomers from "./components/admin/customers/customerEditForms/EditPhysicalCustomers";
 import OrganizationTypes from "./components/admin/organizationTypes/OrganizationTypes";
 import AddOrganizationType from "./components/admin/organizationTypes/AddOrganizationType";
-
+import EditOrgnizationType from './components/admin/organizationTypes/EditOrganizationType'
 function App() {
   return (
     <Router>
@@ -61,6 +61,11 @@ function App() {
                   exact
                   path="/admin/organization-types/add"
                   element={<AddOrganizationType />}
+                />
+                <Route
+                  exact
+                  path="/admin/organization-types/:id/edit"
+                  element={<EditOrgnizationType />}
                 />
                 
               </Route>
