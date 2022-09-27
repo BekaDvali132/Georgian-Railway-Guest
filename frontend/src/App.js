@@ -12,6 +12,7 @@ import { TranslationContextProvider } from "./components/contexts/TranslationCon
 import Customers from "./components/admin/customers/Customers";
 import AddCustomers from "./components/admin/customers/AddCustomers";
 import EditPhysicalCustomers from "./components/admin/customers/customerEditForms/EditPhysicalCustomers";
+import OrganizationTypes from "./components/admin/organizationTypes/OrganizationTypes";
 
 function App() {
   return (
@@ -52,6 +53,9 @@ function App() {
                   path="/admin/customers/physical/:id/edit"
                   element={<EditPhysicalCustomers />}
                 />
+
+                {/* Organization types */}
+                <Route exact path="/admin/organization-types" element={<OrganizationTypes />} />
 
               </Route>
             </Routes>

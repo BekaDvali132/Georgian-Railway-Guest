@@ -4,7 +4,8 @@ import {
   MenuUnfoldOutlined,
   FlagOutlined,
   LogoutOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
+  AreaChartOutlined
 } from "@ant-design/icons";
 import React, { useContext, useState } from "react";
 import './AdminRoute.scss'
@@ -93,6 +94,12 @@ function AdminRoute() {
             },
             {
               key: "3",
+              icon: <AreaChartOutlined />,
+              label: translations['ka']?.['organization_types'],
+              onClick: ()=>(navigate('/admin/organization-types'))
+            },
+            {
+              key: "4",
               icon: <LogoutOutlined />,
               label: translations['ka']?.['logout'],
               onClick: ()=>(adminContext.resetUser(),navigate('/admin/login'))

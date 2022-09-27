@@ -40,6 +40,8 @@
         "physical/legal_individuals":"ფიზ./იურ. პირები",
         "customers":"კლიენტები",
         "name":"სახელი",
+        "name_en":"სახელი ინგლისურად",
+        "name_ru":"სახელი რუსილად",
         "last_name":"გვარი",
         "gender": "სქესი",
         "citizenship":"მოქალაქეობა",
@@ -63,7 +65,9 @@
         "bank_account_number":"საბანკო ანგარიშის ნომერი",
         "legal_address":"იურიდიული მისამართი",
         "physical_customers":"ფიზიკური კლიენტები",
-        "legal_customers":"იურიდიული კლიენტები"
+        "legal_customers":"იურიდიული კლიენტები",
+        "organization_types":"ორგანიზაციის ტიპები",
+        "add_organization_type":"ორგანიზაციის ტიპის დამატება"
 
     }
 }
