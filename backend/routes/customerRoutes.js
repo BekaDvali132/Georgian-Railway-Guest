@@ -46,6 +46,7 @@ router.post(
   check("first_name").notEmpty().withMessage("კლიენტის სახელი აუცილებელია"),
   check("last_name").notEmpty().withMessage("კლიენტის გვარი აუცილებელია"),
   check("gender").notEmpty().withMessage("კლიენტის სქესი აუცილებელია"),
+  check("verification").notEmpty().withMessage('ვერიფიკაციის გავლა სავალდებულოა'),
   check("citizenship")
     .notEmpty()
     .withMessage("კლიენტის მოქალაქეობა აუცილებელია"),
@@ -132,6 +133,7 @@ router.post(
         : "";
     }
   }),
+  check('recaptcha').notEmpty().withMessage('გთხოვთ გაიაროთ შემოწმება'),
   registerPhysicalCustomers
 );
 
@@ -197,6 +199,7 @@ router.post(
         return Promise.reject("მითითებული ელ.ფოსტით კლიენტი უკვე არსებობს");
       }
     }),
+    check("verification").equals(true).withMessage('ვერიფიცირების გავლა სავალდებულოა'),
   check("phone_number")
     .notEmpty()
     .withMessage("ტელეფონის ნომერი აუცილებელია")
@@ -213,6 +216,7 @@ router.post(
       }
     }),
   check("password").notEmpty().withMessage("კლიენტის პაროლი აუცილებელია"),
+  check('recaptcha').notEmpty().withMessage('გთხოვთ გაიაროთ შემოწმება'),
   registerLegalCustomer
 );
 

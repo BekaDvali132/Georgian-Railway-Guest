@@ -6,7 +6,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import translations from "../../../hooks/translation/translations.json";
 import FormatedNumberInput from "../../../inputs/FormatedNumberInput";
-
+import ReCAPTCHA from "react-google-recaptcha";
+import { useRef } from "react";
 const { Option } = Select;
 
 function AddPhysicalCustomer() {
@@ -20,6 +21,7 @@ function AddPhysicalCustomer() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [verifyCount, setVerifyCount] = useState(0);
+  const recaptchaRef = useRef();
 
   const getFormOptions = () => {
     axios.get("/api/customers/form").then((res) => {
@@ -46,15 +48,17 @@ function AddPhysicalCustomer() {
   };
 
   const onFinish = (values) => {
-    setIsLoading(true);
-    axios.post("/api/customers/physical", values).then((res) => {
-      if (res?.data?.status === "success") {
-        navigate("/admin/customers");
-      } else {
-        setErrors(res?.data?.errors);
-      }
-      setIsLoading(false);
-    });
+      setIsLoading(true);
+      values.verification = isVerified === true ? isVerified : null;
+      values.recaptcha = recaptchaRef.current.getValue();
+      axios.post("/api/customers/physical", values).then((res) => {
+        if (res?.data?.status === "success") {
+          navigate("/admin/customers");
+        } else {
+          setErrors(res?.data?.errors);
+        }
+        setIsLoading(false);
+      });
   };
 
   const sendCode = (method) => {
@@ -89,7 +93,7 @@ function AddPhysicalCustomer() {
           setIsVerified(true);
           setVerifyCount(0);
           setErrors(null);
-          verifyForm.resetFields()
+          verifyForm.resetFields();
         } else {
           setErrors(res?.data?.errors);
         }
@@ -202,22 +206,23 @@ function AddPhysicalCustomer() {
         </>
       )}
 
-      {isGeorgian?
-        <FormatedNumberInput form={form} label={translations['ka']['personal_number'] + "*"} name={'personal_number'} errorMessage={errors?.personal_number}/>
-      :
-      <Form.Item
-        label={
-          translations["ka"][
-            "passport_number"
-          ] + "*"
-        }
-        name={"passport_number"}
-        validateStatus={errors?.["passport_number"] && "error"}
-        help={errors?.["passport_number"]}
-      >
-
+      {isGeorgian ? (
+        <FormatedNumberInput
+          form={form}
+          label={translations["ka"]["personal_number"] + "*"}
+          name={"personal_number"}
+          errorMessage={errors?.personal_number}
+        />
+      ) : (
+        <Form.Item
+          label={translations["ka"]["passport_number"] + "*"}
+          name={"passport_number"}
+          validateStatus={errors?.["passport_number"] && "error"}
+          help={errors?.["passport_number"]}
+        >
           <Input />
-      </Form.Item>}
+        </Form.Item>
+      )}
       <Form.Item
         label={translations["ka"]["country_phone_code"] + "*"}
         name={"country_phone_code"}
@@ -241,7 +246,14 @@ function AddPhysicalCustomer() {
         </Select>
       </Form.Item>
 
-      <FormatedNumberInput form={form} controls={false} type="number" label={translations['ka']['phone_number'] + "*"} name={'phone_number'} errorMessage={errors?.phone_number}/>
+      <FormatedNumberInput
+        form={form}
+        controls={false}
+        type="number"
+        label={translations["ka"]["phone_number"] + "*"}
+        name={"phone_number"}
+        errorMessage={errors?.phone_number}
+      />
 
       <Form.Item
         label={translations["ka"]["email"] + "*"}
@@ -249,7 +261,7 @@ function AddPhysicalCustomer() {
         validateStatus={errors?.email && "error"}
         help={errors?.email}
       >
-        <Input onChange={()=>setIsVerified(false)}/>
+        <Input onChange={() => setIsVerified(false)} />
       </Form.Item>
 
       <Form.Item
@@ -265,6 +277,8 @@ function AddPhysicalCustomer() {
           label={translations["ka"]["verification_method"] + "*"}
           name={"verification_method"}
           initialValue={"1"}
+          validateStatus={errors?.verification && "error"}
+          help={errors?.verification}
         >
           <Select
             placeholder={translations["ka"]["verification_method"]}
@@ -290,17 +304,25 @@ function AddPhysicalCustomer() {
           {verifyCount > 0 && verifyCount} {translations["ka"]["send_code"]}
         </Button>
       </Space>
-
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          loading={isLoading}
-          disabled={!isVerified}
+      <Space>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={isLoading}>
+            {translations["ka"]["submit"]}
+          </Button>
+        </Form.Item>
+        <Form.Item
+          validateStatus={errors?.recaptcha && "error"}
+          help={errors?.recaptcha}
         >
-          {translations["ka"]["submit"]}
-        </Button>
-      </Form.Item>
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={
+              process.env.PUBLIC_RECAPTCHA_SITE_KEY ||
+              "6LeIojYiAAAAAMAmM_nOKKYYH4zgeQFdPzz0xxNJ"
+            }
+          />
+        </Form.Item>
+      </Space>
     </Form>
   );
 }

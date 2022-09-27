@@ -6,7 +6,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import translations from "../../../hooks/translation/translations.json";
 import FormatedNumberInput from "../../../inputs/FormatedNumberInput";
-
+import ReCAPTCHA from "react-google-recaptcha";
+import { useRef } from "react";
 const { Option } = Select;
 
 function AddPhysicalCustomer() {
@@ -19,6 +20,7 @@ function AddPhysicalCustomer() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [verifyCount, setVerifyCount] = useState(0);
+  const recaptchaRef = useRef();
 
   const getFormOptions = () => {
     axios.get("/api/customers/form").then((res) => {
@@ -31,15 +33,18 @@ function AddPhysicalCustomer() {
   useEffect(() => getFormOptions(), []);
 
   const onFinish = (values) => {
-    setIsLoading(true);
-    axios.post("/api/customers/legal", values).then((res) => {
-      if (res?.data?.status === "success") {
-        navigate("/admin/customers");
-      } else {
-        setErrors(res?.data?.errors);
-      }
-      setIsLoading(false);
-    });
+      setIsLoading(true);
+      values.verification = isVerified === true ? isVerified : null;
+      values.recaptcha = recaptchaRef.current.getValue();
+
+      axios.post("/api/customers/legal", values).then((res) => {
+        if (res?.data?.status === "success") {
+          navigate("/admin/customers");
+        } else {
+          setErrors(res?.data?.errors);
+        }
+        setIsLoading(false);
+      });
   };
 
   const sendCode = (method) => {
@@ -74,17 +79,15 @@ function AddPhysicalCustomer() {
           setIsVerified(true);
           setVerifyCount(0);
           setErrors(null);
-          verifyForm.resetFields()
+          verifyForm.resetFields();
         } else {
           setErrors(res?.data?.errors);
         }
       });
   };
 
-  const sendSmsCode = () => {
+  const sendSmsCode = () => {};
 
-  };
-  
   return (
     <Form layout="vertical" form={form} onFinish={onFinish}>
       <Modal
@@ -201,31 +204,40 @@ function AddPhysicalCustomer() {
         name={"legal_address"}
         validateStatus={errors?.legal_address && "error"}
         help={errors?.legal_address}
-        
       >
         <Input />
       </Form.Item>
 
-      
-        <Space >
-          <FormatedNumberInput form={form} style={{ width: "300px" }} name={"phone_number"} label={translations["ka"]["phone_number"] + "*"} errorMessage={errors?.phone_number}/>
-          <Button type="link" htmlType="button"
-            onClick={()=>{
-              sendSmsCode()
-            }}
-          >
-            {translations["ka"]["send_code"]}
-          </Button>
-        </Space>
+      <Space>
+        <FormatedNumberInput
+          form={form}
+          style={{ width: "300px" }}
+          name={"phone_number"}
+          label={translations["ka"]["phone_number"] + "*"}
+          errorMessage={errors?.phone_number}
+        />
+        <Button
+          type="link"
+          htmlType="button"
+          onClick={() => {
+            sendSmsCode();
+          }}
+        >
+          {translations["ka"]["send_code"]}
+        </Button>
+      </Space>
 
       <Form.Item
         label={translations["ka"]["email"] + "*"}
         name={"email"}
-        validateStatus={errors?.email && "error"}
-        help={errors?.email}
+        validateStatus={(errors?.email || errors?.verification) && "error"}
+        help={errors?.email || errors?.verification}
       >
         <Space>
-          <Input onChange={() => setIsVerified(false)} style={{ width: "300px" }}/>
+          <Input
+            onChange={() => setIsVerified(false)}
+            style={{ width: "300px" }}
+          />
           <Button
             type="link"
             htmlType="button"
@@ -249,16 +261,25 @@ function AddPhysicalCustomer() {
         <Input type="password" />
       </Form.Item>
 
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          loading={isLoading}
-          disabled={!isVerified}
+      <Space>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={isLoading}>
+            {translations["ka"]["submit"]}
+          </Button>
+        </Form.Item>
+        <Form.Item
+          validateStatus={errors?.recaptcha && "error"}
+          help={errors?.recaptcha}
         >
-          {translations["ka"]["submit"]}
-        </Button>
-      </Form.Item>
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={
+              process.env.PUBLIC_RECAPTCHA_SITE_KEY ||
+              "6LeIojYiAAAAAMAmM_nOKKYYH4zgeQFdPzz0xxNJ"
+            }
+          />
+        </Form.Item>
+      </Space>
     </Form>
   );
 }
