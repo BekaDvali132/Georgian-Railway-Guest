@@ -62,6 +62,8 @@
         "country":"ქვეყანა",
         "organization_type":"ორგანიზაციის ტიპი",
         "organization_name": "ორგანიზაციის დასახელება",
+        "organization_name_en":"ორგანიზაციის დასახელება ინგლისურად",
+        "organization_name_ru":"ორგანიზაციის დასახელება რუსულად",
         "bank_account_number":"საბანკო ანგარიშის ნომერი",
         "legal_address":"იურიდიული მისამართი",
         "physical_customers":"ფიზიკური კლიენტები",

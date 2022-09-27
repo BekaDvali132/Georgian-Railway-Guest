@@ -81,7 +81,7 @@ function OrganizationTypes() {
 
   return (
     <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
-      <Button type="primary" onClick={() => navigate("/admin/customers/add")}>
+      <Button type="primary" onClick={() => navigate("/admin/organization-types/add")}>
         {translations["ka"]["add_organization_type"]}
       </Button>
       <div className="overflow-table">
