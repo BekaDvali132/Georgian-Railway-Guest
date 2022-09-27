@@ -21,5 +21,6 @@ app.use("/api/countries", require("./routes/countryRoutes"));
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/customers', require('./routes/customerRoutes'))
 app.use('/api/verify', require('./routes/verifyRoutes'))
+app.use('/api/organization-types', require('./routes/organizationTypeRoutes'))
 
 app.listen(port, () => console.log(`server started on port ${port}`));
