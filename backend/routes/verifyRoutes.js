@@ -12,7 +12,14 @@ router.post(
     .notEmpty()
     .withMessage("ელ.ფოსტა აუცილებელია")
     .isEmail()
-    .withMessage("ელ.ფოსტა არასწორი ფორმატითაა მითითებული"),
+    .withMessage("ელ.ფოსტა არასწორი ფორმატითაა მითითებული")
+    .custom(async value => {
+      const emailExists = await pool.query("select email from physical_customers where email = $1 union select email from legal_customers where email = $1",[value])
+
+      if (emailExists?.rows?.[0]) {
+        return Promise.reject("ელ.ფოსტა დაკავებულია");
+    }
+    }),
   verifyEmail
 );
 
