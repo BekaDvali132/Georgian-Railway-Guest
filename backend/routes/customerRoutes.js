@@ -94,9 +94,23 @@ router.post(
   "/legal",
   protect,
   check("country").notEmpty().withMessage("ქვეყანა აუცილებელია"),
-  check("identification_number").notEmpty().withMessage("საიდენტიფიკაციო ნომერი აუცილებელია"),
+  check("identification_number").notEmpty().withMessage("საიდენტიფიკაციო ნომერი აუცილებელია").custom(async value => {
+    const identificationNumberExists = await pool.query(
+      "SELECT * FROM legal_customers WHERE identification_number = $1",
+      [value]);
+      if (identificationNumberExists?.rows?.[0]) {
+        return Promise.reject("საიდენტიფიკაციო ნომერი დაკავებულია");
+      }
+  }),
   check("organization_type").notEmpty().withMessage("ორგანიზაციის ტიპი აუცილებელია"),
-  check("organization_name").notEmpty().withMessage("ორგანიზაციის დასახელება აუცილებელია"),
+  check("organization_name").notEmpty().withMessage("ორგანიზაციის დასახელება აუცილებელია").custom(async value => {
+    const organizationNameExists = await pool.query(
+      "SELECT * FROM legal_customers WHERE organization_name = $1",
+      [value]);
+      if (organizationNameExists?.rows?.[0]) {
+        return Promise.reject("ორგანიზაციის დასახელება დაკავებულია");
+      }
+  }),
   check("bank_account_number").notEmpty().withMessage("საბანკო ანგარიშის ნომერი აუცილებელია"),
   check('legal_address').notEmpty().withMessage("იურიდიული მისამართი აუცილებელია"),
   check("email").notEmpty().withMessage("ელ.ფოსტა აუცილებელია").isEmail().withMessage('ელ.ფოსტა არასწორი ფორმატითაა მითითებული').custom(async (value) => {
