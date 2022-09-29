@@ -24,14 +24,14 @@ function AdminRoute() {
   const adminContext = useContext(AdminContext)
 
   axios.interceptors.request.use(function (req){
-    if(localStorage.getItem('accessToken')) {
-      req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('accessToken'))}`;
+    if(localStorage.getItem('adminAccessToken')) {
+      req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('adminAccessToken'))}`;
   }
   return req;
   })
 
   const getMe = () => {
-    if (localStorage.getItem('accessToken')) {
+    if (localStorage.getItem('adminAccessToken')) {
       axios.get('/api/users/me').then((res)=>{
 
         if (res?.data?.status === 'success') {

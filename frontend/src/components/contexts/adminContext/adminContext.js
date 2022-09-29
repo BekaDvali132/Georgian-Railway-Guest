@@ -2,30 +2,30 @@ import { useState } from "react";
 import { createContext } from "react";
 
 export const AdminContext = createContext({
-    user: localStorage.getItem("user"),
+    user: localStorage.getItem("admin"),
     setUser: () => {
 
     }});
 
 export const AdminContextProvider = (props) => {
-    const [state, setState] = useState(JSON.parse(localStorage.getItem("user")));
-    const [accessToken, setAccessToken] = useState(JSON.parse(localStorage.getItem("accessToken")));
+    const [state, setState] = useState(JSON.parse(localStorage.getItem("admin")));
+    const [accessToken, setAccessToken] = useState(JSON.parse(localStorage.getItem("adminAccessToken")));
   
     const setUser  = async (user, token) => {
       setState(user);
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('accessToken', JSON.stringify(token));
+      localStorage.setItem("admin", JSON.stringify(user));
+      localStorage.setItem('adminAccessToken', JSON.stringify(token));
     };
   
     const resetUser = () => {
       setState(null);
-      localStorage.removeItem('user');
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem("admin");
+      localStorage.removeItem('adminAccessToken');
       setAccessToken(null);
     };
   
     const hasRole = roles => {
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem("admin"));
       const userRole = user?.role_id || null;
       return roles.some(r => r === userRole?.name);
     };

@@ -266,7 +266,7 @@ const loginCustomer = async (req, res) => {
       },
     });
   } else {
-    res.status(400).json({
+    res.status(200).json({
       errors: {
         password: "პაროლი არასწორია",
       },

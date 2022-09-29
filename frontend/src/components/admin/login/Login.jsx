@@ -36,12 +36,12 @@ function Login() {
   };
 
   const checkLogin = () => {
-    if (localStorage.getItem("accessToken")) {
+    if (localStorage.getItem("adminAccessToken")) {
       axios
         .get("/api/users/me", {
           headers: {
             Authorization:
-              "Bearer " + JSON?.parse(localStorage.getItem("accessToken")),
+              "Bearer " + JSON?.parse(localStorage.getItem("adminAccessToken")),
           },
         })
         .then((res) => {

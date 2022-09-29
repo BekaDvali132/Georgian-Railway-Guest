@@ -12,13 +12,16 @@ import AddCustomers from "./components/admin/customers/AddCustomers";
 import EditPhysicalCustomers from "./components/admin/customers/customerEditForms/EditPhysicalCustomers";
 import OrganizationTypes from "./components/admin/organizationTypes/OrganizationTypes";
 import AddOrganizationType from "./components/admin/organizationTypes/AddOrganizationType";
-import EditOrgnizationType from './components/admin/organizationTypes/EditOrganizationType'
+import EditOrgnizationType from './components/admin/organizationTypes/EditOrganizationType';
+import UserLogin from "./components/userLogin/UserLogin";
+import {UserContextProvider} from './components/contexts/userContext/userContext'
 function App() {
   return (
     <Router>
       <TranslationContextProvider>
         <div className="App">
           <AdminContextProvider>
+            <UserContextProvider>
             <Routes>
               <Route path="/admin/login" element={<Login />} />
 
@@ -69,7 +72,9 @@ function App() {
                 />
                 
               </Route>
+              <Route path="/login" element={<UserLogin/>}/>
             </Routes>
+            </UserContextProvider>
           </AdminContextProvider>
         </div>
       </TranslationContextProvider>
