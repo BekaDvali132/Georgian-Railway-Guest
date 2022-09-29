@@ -53,6 +53,11 @@ const physicalCustomerColumns = [
     key: "email",
   },
   {
+    title:translations['ka']['reset_password'],
+    dataIndex:"reset_password",
+    key:'reset_password'
+  },
+  {
     title: translations['ka']['delete'],
     dataIndex: "delete",
     key: "delete",
@@ -94,6 +99,11 @@ const legalCustomerColumns = [
     title: translations['ka']['phone_number'],
     dataIndex: "phone_number",
     key: "phone_number",
+  },
+  {
+    title:translations['ka']['reset_password'],
+    dataIndex:"reset_password",
+    key:'reset_password'
   },
   {
     title: translations['ka']['email'],
@@ -152,6 +162,21 @@ function Customers() {
       );
   };
 
+  const resetPassword = (id, isLegal) => {
+    message.loading(translations['ka']['reseting_password'])
+
+    axios.post(`/api/customers/${isLegal ? 'legal' : 'physical'}/${id}`).then(res=>{
+      message.destroy()
+      if (res?.data?.status === 'success') {
+        message.success(translations['ka']['password_successfully_reseted'])
+      } else {
+        message.error(translations['ka']['password_not_reseted'])
+      }
+    }).catch(res=>{
+      message.error(translations['ka']['password_not_reseted'])
+    })
+  }
+
   return (
       <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
       <Button type="primary" onClick={()=>navigate('/admin/customers/add')}>{translations['ka']['add_customer']}</Button>
@@ -171,7 +196,7 @@ function Customers() {
           country_phone_code: customer?.country_phone_code,
           phone_number: customer?.phone_number,
           email: customer?.email,
-          // edit: <Button onClick={()=>navigate(`/admin/customers/physical/${customer.id}/edit`)}> {translations['ka']['edit']}</Button>,
+          reset_password: <Button onClick={()=>resetPassword(customer.id,false)}> {translations['ka']['reset_password']}</Button>,
           delete: <Button
           type="danger"
           onClick={() => checkIfDelete(customer?.id, customer?.first_name, false)}
@@ -200,7 +225,7 @@ function Customers() {
           country_phone_code: customer?.country_phone_code,
           phone_number: customer?.phone_number,
           email: customer?.email,
-          // edit: <Button onClick={()=>navigate(`/admin/customers/legal/${customer.id}/edit`)}> {translations['ka']['edit']}</Button>,
+          reset_password: <Button onClick={()=>resetPassword(customer.id, true)}> {translations['ka']['reset_password']}</Button>,
           delete: <Button
           type="danger"
           onClick={() => checkIfDelete(customer?.id, customer?.organization_name, true)}

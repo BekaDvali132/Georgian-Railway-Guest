@@ -69,7 +69,10 @@
         "physical_customers":"ფიზიკური კლიენტები",
         "legal_customers":"იურიდიული კლიენტები",
         "organization_types":"ორგანიზაციის ტიპები",
-        "add_organization_type":"ორგანიზაციის ტიპის დამატება"
-
+        "add_organization_type":"ორგანიზაციის ტიპის დამატება",
+        "reset_password":"პაროლის განახლება",
+        "reseting_password":"მიმდინარეობს პაროლის განახლება",
+        "password_successfully_reseted":"პაროლი წარმატებით განახლდა",
+        "password_not_reseted":"პაროლის განახლება ვერ მოხერხდა"
     }
 }
