@@ -49,6 +49,9 @@ function UserLogin() {
           <Button type="primary" htmlType="submit" loading={isLoading}>
             {trans("submit")}
           </Button>
+          <Button  type="link" htmlType="button">
+            {trans('forgot_password')}
+          </Button>
         </Form.Item>
       </Form>
     </div>

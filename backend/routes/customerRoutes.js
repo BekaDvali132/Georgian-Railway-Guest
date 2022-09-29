@@ -200,7 +200,7 @@ router.post(
         return Promise.reject("მითითებული ელ.ფოსტით კლიენტი უკვე არსებობს");
       }
     }),
-    check("verification").equals(true).withMessage('ვერიფიცირების გავლა სავალდებულოა'),
+    check("verification").notEmpty().withMessage('ვერიფიკაციის გავლა სავალდებულოა'),
   check("phone_number")
     .notEmpty()
     .withMessage("ტელეფონის ნომერი აუცილებელია")

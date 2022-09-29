@@ -280,6 +280,9 @@ const loginCustomer = async (req, res) => {
   }
 };
 
+// @desc    Reset Customer Password
+// @route   Post /api/customers/:id/reset
+// @access  Private
 const resetCustomer = async (req, res) => {
   const { id } = req.params;
   const {legal} = req.body
@@ -295,11 +298,11 @@ const resetCustomer = async (req, res) => {
 
 
     const updatedCustomer = await pool.query(
-      `UPDATE physical_customers SET password = $2 WHERE id = $1`,
+      `UPDATE ${legal ? 'legal_customers' : 'physical_customers'} SET password = $2 WHERE id = $1`,
       [id, hashedPassword]
     );
 
-    sendNewPasswordMail(customer?.rows?.[0]?.email, customer?.rows?.[0]?.first_name, generatedPassword)
+    sendNewPasswordMail(customer?.rows?.[0]?.email, customer?.rows?.[0]?.first_name || customer?.rows?.[0]?.organization_name, generatedPassword)
 
     res.status(200).json({
       status:'success'
