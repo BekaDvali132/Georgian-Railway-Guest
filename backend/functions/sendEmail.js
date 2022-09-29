@@ -51,7 +51,7 @@ const sendNewPasswordMail = (email, name, generatedPassword) => {
   let mailOptions = {
     from: process.env.EMAIL,
     to: email,
-    subject: "თქვენ წარმატებით აღადგინეთ პაროლი CRM-ზე",
+    subject: "თქვენ წარმატებით აღიდგინდათ პაროლი GR-ზე",
     text: `თქვენი მონაცემებია დასახელება: ${name} ელ.ფოსტა: ${email} პაროლი: ${generatedPassword}`, // plain text body
   };
 

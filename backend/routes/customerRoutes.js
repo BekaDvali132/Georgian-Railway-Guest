@@ -11,6 +11,7 @@ const {
   getPhysicalCustomer,
   getCurrentCustomer,
   loginCustomer,
+  resetCustomer
 } = require("../controllers/customerController");
 const { check } = require("express-validator");
 const pool = require("../database/db");
@@ -219,6 +220,8 @@ router.post(
   check('recaptcha').notEmpty().withMessage('გთხოვთ გაიაროთ შემოწმება'),
   registerLegalCustomer
 );
+
+router.post("/:id/reset", protect, resetCustomer);
 
 router.get("/physical/:id", protect, getPhysicalCustomer);
 

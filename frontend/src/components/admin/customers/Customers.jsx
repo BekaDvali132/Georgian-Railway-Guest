@@ -101,14 +101,14 @@ const legalCustomerColumns = [
     key: "phone_number",
   },
   {
-    title:translations['ka']['reset_password'],
-    dataIndex:"reset_password",
-    key:'reset_password'
-  },
-  {
     title: translations['ka']['email'],
     dataIndex: "email",
     key: "email",
+  },
+  {
+    title:translations['ka']['reset_password'],
+    dataIndex:"reset_password",
+    key:'reset_password'
   },
   {
     title: translations['ka']['delete'],
@@ -165,7 +165,7 @@ function Customers() {
   const resetPassword = (id, isLegal) => {
     message.loading(translations['ka']['reseting_password'])
 
-    axios.post(`/api/customers/${isLegal ? 'legal' : 'physical'}/${id}`).then(res=>{
+    axios.post(`/api/customers/${id}/reset`, {legal:isLegal}).then(res=>{
       message.destroy()
       if (res?.data?.status === 'success') {
         message.success(translations['ka']['password_successfully_reseted'])

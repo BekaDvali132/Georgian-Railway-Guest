@@ -3,7 +3,7 @@ const { errorsObjectFormatter } = require("../middleware/errorsFormatter");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const e = require("express");
+const { sendNewPasswordMail } = require("../functions/sendEmail");
 
 // @desc    Get Customers
 // @route   GET /api/customers
@@ -65,20 +65,26 @@ const registerPhysicalCustomers = async (req, res) => {
 
   let newCustomer;
 
-    newCustomer = await pool.query(
-      `INSERT INTO physical_customers (first_name, last_name, gender, citizenship, ${country.rows?.[0]?.name_ka === "საქართველო" ? 'personal_number' : 'passport_number'}, country_phone_code, phone_number, email, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-      [
-        first_name,
-        last_name,
-        gender,
-        citizenship,
-        country.rows?.[0]?.name_ka === "საქართველო" ? personal_number : passport_number,
-        country_phone_code,
-        phone_number,
-        email,
-        hashedPassword,
-      ]
-    );
+  newCustomer = await pool.query(
+    `INSERT INTO physical_customers (first_name, last_name, gender, citizenship, ${
+      country.rows?.[0]?.name_ka === "საქართველო"
+        ? "personal_number"
+        : "passport_number"
+    }, country_phone_code, phone_number, email, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [
+      first_name,
+      last_name,
+      gender,
+      citizenship,
+      country.rows?.[0]?.name_ka === "საქართველო"
+        ? personal_number
+        : passport_number,
+      country_phone_code,
+      phone_number,
+      email,
+      hashedPassword,
+    ]
+  );
 
   res.status(200).json({
     status: "success",
@@ -274,6 +280,37 @@ const loginCustomer = async (req, res) => {
   }
 };
 
+const resetCustomer = async (req, res) => {
+  const { id } = req.params;
+  const {legal} = req.body
+
+  const customer = await pool.query(`SELECT * from ${legal ? 'legal_customers' : 'physical_customers'} where id = $1`,[id])
+
+  if (id && customer?.rows?.[0]) {
+    const generatedPassword = Math.random().toString(36).slice(-8);
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(generatedPassword, salt);
+
+
+    const updatedCustomer = await pool.query(
+      `UPDATE physical_customers SET password = $2 WHERE id = $1`,
+      [id, hashedPassword]
+    );
+
+    sendNewPasswordMail(customer?.rows?.[0]?.email, customer?.rows?.[0]?.first_name, generatedPassword)
+
+    res.status(200).json({
+      status:'success'
+    })
+  } else {
+    res.status(200).json({
+      status:'unsuccess'
+    })
+  }
+};
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
@@ -289,4 +326,5 @@ module.exports = {
   getPhysicalCustomer,
   getCurrentCustomer,
   loginCustomer,
+  resetCustomer,
 };
