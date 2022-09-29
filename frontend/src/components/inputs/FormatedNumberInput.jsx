@@ -1,5 +1,4 @@
-import { Form, Input, InputNumber } from "antd";
-import React from "react";
+import { Form, Input } from "antd";
 import { useState } from "react";
 
 function FormatedNumberInput({name, label, errorMessage, style, form}) {

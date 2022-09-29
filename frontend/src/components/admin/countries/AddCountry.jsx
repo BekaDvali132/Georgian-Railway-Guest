@@ -1,9 +1,8 @@
-import { Button, Form, Input, InputNumber, message, Space, Upload } from "antd";
+import { Button, Form, Input, InputNumber, Space, Upload } from "antd";
 import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
-import { useEffect } from "react";
 import translations from '../../hooks/translation/translations.json'
 
 function AddCountry() {

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { TranslationContext} from '../../contexts/TranslationContext'
 import translations from './translations.json';
 

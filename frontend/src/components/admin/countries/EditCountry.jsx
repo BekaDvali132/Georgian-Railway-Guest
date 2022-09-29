@@ -1,9 +1,8 @@
-import { Button, Form, Input, InputNumber, message, Space, Upload } from "antd";
+import { Button, Form, Input, InputNumber, Space, Upload } from "antd";
 import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import translations from '../../hooks/translation/translations.json'
 
 function EditCountry() {
@@ -12,7 +11,6 @@ function EditCountry() {
   let navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [fileList, setFileList] = useState([]);
-  const [file, setFile] = useState([]);
   const basepath = process.env.BASE_PATH || 'http://localhost:5000/';
 
   useEffect(()=>{
@@ -72,7 +70,7 @@ function EditCountry() {
     }
     return false;
   }
-console.log(file?.[0]?.url);
+
   return (
     <Space size={"large"} direction="vertical" style={{ width: "100%" }}>
       <ArrowLeftOutlined

@@ -1,10 +1,8 @@
 import { Button, message, Modal, Space, Table } from "antd";
 import axios from "axios";
-import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useTranslation from "../../hooks/translation/useTranslation";
 import translations from '../../hooks/translation/translations.json'
 
 function Countries() {
@@ -12,7 +10,6 @@ function Countries() {
   const [render, setRender] = useState();
   let navigate = useNavigate();
   const basepath = process.env.BASE_PATH || 'http://localhost:5000/';
-  const {trans} = useTranslation();
 
   const columns = [
     {
@@ -92,7 +89,7 @@ function Countries() {
         dataSource={countries?.map((country) => {
           return {
             key: country.id,
-            flag_image_path: <img src={`${basepath}${country?.flag_image_path}`} width={50} height={50} style={{objectFit:'contain'}}/>,
+            flag_image_path: <img src={`${basepath}${country?.flag_image_path}`} width={50} height={50} style={{objectFit:'contain'}} alt={country?.name_ka}/>,
             name_ka: country?.name_ka,
             name_en: country?.name_en,
             name_ru: country?.name_ru,

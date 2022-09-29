@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Modal, Select, Space } from "antd";
+import { Button, Form, Input, Modal, Select, Space } from "antd";
 import axios from "axios";
 import React from "react";
 import { useEffect } from "react";

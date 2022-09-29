@@ -1,12 +1,10 @@
 import { Button, Form, Input } from "antd";
 import axios from "axios";
-import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminContext } from "../../contexts/adminContext/adminContext";
-import useTranslation from "../../hooks/translation/useTranslation";
 import "./Login.scss";
 import translations from '../../hooks/translation/translations.json';
 
@@ -15,11 +13,10 @@ function Login() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {trans} = useTranslation()
 
   const handleFinish = async (values) => {
     setIsLoading(true);
-    const logPromise = await axios
+    axios
       .post("/api/users/login", values)
       .then((res) => {
         setIsLoading(false);

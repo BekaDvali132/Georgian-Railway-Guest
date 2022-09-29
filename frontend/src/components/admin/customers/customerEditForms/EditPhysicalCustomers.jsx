@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import translations from "../../../hooks/translation/translations.json";
 import FormatedNumberInput from "../../../inputs/FormatedNumberInput";
-import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -71,11 +71,11 @@ function EditPhysicalCustomers() {
   };
 
   const sendCode = (method) => {
-    if (method == 1) {
+    if (method === 1) {
       axios
         .post("/api/verify/email", { email: form.getFieldValue("email") })
         .then((res) => {
-          if (res?.data.status == "success") {
+          if (res?.data.status === "success") {
             setVerifyCount(30);
             setOpen(true);
           } else {

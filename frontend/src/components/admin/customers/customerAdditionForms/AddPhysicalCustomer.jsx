@@ -1,6 +1,5 @@
-import { Button, Form, Input, InputNumber, Modal, Select, Space } from "antd";
+import { Button, Form, Input, Modal, Select, Space } from "antd";
 import axios from "axios";
-import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -66,7 +65,7 @@ function AddPhysicalCustomer() {
       axios
         .post("/api/verify/email", { email: form.getFieldValue("email") })
         .then((res) => {
-          if (res?.data.status == "success") {
+          if (res?.data.status === "success") {
             setVerifyCount(30);
             setOpen(true);
           } else {
@@ -272,6 +271,7 @@ function AddPhysicalCustomer() {
       >
         <Input type="password" />
       </Form.Item>
+      <Space direction="vertical">
       <Space>
         <Form.Item
           label={translations["ka"]["verification_method"] + "*"}
@@ -322,6 +322,7 @@ function AddPhysicalCustomer() {
             }
           />
         </Form.Item>
+      </Space>
       </Space>
     </Form>
   );
