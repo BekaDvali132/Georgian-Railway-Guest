@@ -74,6 +74,9 @@
         "reseting_password":"მიმდინარეობს პაროლის განახლება",
         "password_successfully_reseted":"პაროლი წარმატებით განახლდა",
         "password_not_reseted":"პაროლის განახლება ვერ მოხერხდა",
-        "forgot_password":"დაგავიწყდათ პაროლი?"
+        "forgot_password":"დაგავიწყდათ პაროლი?",
+        "password_recovery":"პაროლის აღდგენა",
+        "cancel":"გაუქმება",
+        "send":"გაგზავნა"
     }
 }

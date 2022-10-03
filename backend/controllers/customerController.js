@@ -3,7 +3,7 @@ const { errorsObjectFormatter } = require("../middleware/errorsFormatter");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { sendNewPasswordMail } = require("../functions/sendEmail");
+const { sendNewPasswordMail, sendCodeMail } = require("../functions/sendEmail");
 
 // @desc    Get Customers
 // @route   GET /api/customers
@@ -314,6 +314,61 @@ const resetCustomer = async (req, res) => {
   }
 };
 
+const sendRecovery = async (req,res) => {
+  errorsObjectFormatter(req, res);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.mapped() });
+  }
+
+  const {email, type} = req.body;
+
+  const customerExists = await pool.query(`Select * from ${type} where email = $1`,[email])
+
+  if (customerExists?.rows?.[0]) {
+
+    const resetCodes = await pool.query('Select code from password_resets')
+
+    const generatedCode = generateCode(resetCodes?.rows);
+
+    const emailCodeExists = await pool.query('Select * from password_resets where email = $1',[email])
+
+    if (emailCodeExists?.rows?.[0]) {
+      await pool.query(`UPDATE password_resets SET code = $1 WHERE id = $2`,[generatedCode, emailCodeExists?.rows?.[0]?.id]);
+    } else {
+      await pool.query('Insert into password_resets (code, email) values ($1, $2)',[generatedCode, email]);
+    }
+
+    sendCodeMail(email, generatedCode)
+
+    res.status(200).json({
+      status: 'success'
+    })
+
+    
+  } else {
+    res.status(200).json({
+      errors:{
+        email: "მითითებული ელ.ფოსტა არ არსებობს"
+      }
+    })
+  }
+}
+
+// Generate Code
+
+const generateCode = (codes) => {
+
+  const generatedCode = (Math.random() + 1).toString(36).substring(2);
+
+  if (codes?.find(code => code?.code == generatedCode)) {
+    generateCode();
+  } else {
+    return generatedCode;
+  }
+
+}
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
@@ -330,4 +385,5 @@ module.exports = {
   getCurrentCustomer,
   loginCustomer,
   resetCustomer,
+  sendRecovery
 };

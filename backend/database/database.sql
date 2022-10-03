@@ -70,3 +70,10 @@ CREATE TABLE verification_codes(
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     valid_until TIMESTAMP NOT NULL DEFAULT NOW() + INTERVAL '5 minutes'
 );
+
+CREATE TABLE password_resets(
+    id SERIAL PRIMARY KEY,
+    code text NOT NULL,
+    email text,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);

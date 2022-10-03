@@ -11,7 +11,8 @@ const {
   getPhysicalCustomer,
   getCurrentCustomer,
   loginCustomer,
-  resetCustomer
+  resetCustomer,
+  sendRecovery
 } = require("../controllers/customerController");
 const { check } = require("express-validator");
 const pool = require("../database/db");
@@ -222,6 +223,7 @@ router.post(
 );
 
 router.post("/:id/reset", protect, resetCustomer);
+router.post('/send-recovery', check('email').notEmpty().withMessage('ელ.ფოსტა აუცილებელია'), check('type').notEmpty().withMessage('კლიენტის ტიპი აუცილებელია'), sendRecovery)
 
 router.get("/physical/:id", protect, getPhysicalCustomer);
 
