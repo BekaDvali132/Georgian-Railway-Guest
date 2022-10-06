@@ -9,7 +9,8 @@
         "country_name_en":"Country's English name",
         "country_name_ru":"Country's Russian name",
         "country_phone_code":"Country's phone code",
-        "delete":"Delete"
+        "delete":"Delete",
+        "repeat_password":"Repeat password"
     },
     "ka":{
         "submit":"შენახვა",
@@ -77,6 +78,9 @@
         "forgot_password":"დაგავიწყდათ პაროლი?",
         "password_recovery":"პაროლის აღდგენა",
         "cancel":"გაუქმება",
-        "send":"გაგზავნა"
+        "send":"გაგზავნა",
+        "repeat_password":"გაიმეორეთ პაროლი",
+        "password_recover_success":"თქვენ წარმატებით განაახლეთ პაროლი",
+        "password_recover_not_exist":"მითითებული დაზღვევა არ არსებობს"
     }
 }

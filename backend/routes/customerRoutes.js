@@ -12,9 +12,10 @@ const {
   getCurrentCustomer,
   loginCustomer,
   resetCustomer,
-  sendRecovery
+  sendRecovery,
+  passwordRecovery,
 } = require("../controllers/customerController");
-const { check } = require("express-validator");
+const { check, body } = require("express-validator");
 const pool = require("../database/db");
 
 router.get("/", protect, getCustomers);
@@ -48,7 +49,9 @@ router.post(
   check("first_name").notEmpty().withMessage("კლიენტის სახელი აუცილებელია"),
   check("last_name").notEmpty().withMessage("კლიენტის გვარი აუცილებელია"),
   check("gender").notEmpty().withMessage("კლიენტის სქესი აუცილებელია"),
-  check("verification").notEmpty().withMessage('ვერიფიკაციის გავლა სავალდებულოა'),
+  check("verification")
+    .notEmpty()
+    .withMessage("ვერიფიკაციის გავლა სავალდებულოა"),
   check("citizenship")
     .notEmpty()
     .withMessage("კლიენტის მოქალაქეობა აუცილებელია"),
@@ -135,7 +138,7 @@ router.post(
         : "";
     }
   }),
-  check('recaptcha').notEmpty().withMessage('გთხოვთ გაიაროთ შემოწმება'),
+  check("recaptcha").notEmpty().withMessage("გთხოვთ გაიაროთ შემოწმება"),
   registerPhysicalCustomers
 );
 
@@ -164,17 +167,16 @@ router.post(
     .withMessage("ორგანიზაციის ტიპი აუცილებელია"),
   check("organization_name")
     .notEmpty()
-    .withMessage("ორგანიზაციის დასახელება აუცილებელია")
-    // .custom(async (value) => {
-    //   const organizationNameExists = await pool.query(
-    //     "SELECT * FROM legal_customers WHERE organization_name = $1",
-    //     [value]
-    //   );
-    //   if (organizationNameExists?.rows?.[0]) {
-    //     return Promise.reject("ორგანიზაციის დასახელება დაკავებულია");
-    //   }
-    // })
-    ,
+    .withMessage("ორგანიზაციის დასახელება აუცილებელია"),
+  // .custom(async (value) => {
+  //   const organizationNameExists = await pool.query(
+  //     "SELECT * FROM legal_customers WHERE organization_name = $1",
+  //     [value]
+  //   );
+  //   if (organizationNameExists?.rows?.[0]) {
+  //     return Promise.reject("ორგანიზაციის დასახელება დაკავებულია");
+  //   }
+  // })
   check("bank_account_number")
     .notEmpty()
     .withMessage("საბანკო ანგარიშის ნომერი აუცილებელია"),
@@ -201,7 +203,9 @@ router.post(
         return Promise.reject("მითითებული ელ.ფოსტით კლიენტი უკვე არსებობს");
       }
     }),
-    check("verification").notEmpty().withMessage('ვერიფიკაციის გავლა სავალდებულოა'),
+  check("verification")
+    .notEmpty()
+    .withMessage("ვერიფიკაციის გავლა სავალდებულოა"),
   check("phone_number")
     .notEmpty()
     .withMessage("ტელეფონის ნომერი აუცილებელია")
@@ -218,12 +222,44 @@ router.post(
       }
     }),
   check("password").notEmpty().withMessage("კლიენტის პაროლი აუცილებელია"),
-  check('recaptcha').notEmpty().withMessage('გთხოვთ გაიაროთ შემოწმება'),
+  check("recaptcha").notEmpty().withMessage("გთხოვთ გაიაროთ შემოწმება"),
   registerLegalCustomer
 );
 
 router.post("/:id/reset", protect, resetCustomer);
-router.post('/send-recovery', check('email').notEmpty().withMessage('ელ.ფოსტა აუცილებელია'), check('type').notEmpty().withMessage('კლიენტის ტიპი აუცილებელია'), sendRecovery)
+router.post(
+  "/send-recovery",
+  check("email").notEmpty().withMessage("ელ.ფოსტა აუცილებელია"),
+  check("type").notEmpty().withMessage("კლიენტის ტიპი აუცილებელია"),
+  sendRecovery
+);
+router.post(
+  "/recover-password/:code",
+  check(["password", "repeat_password"])
+    .notEmpty()
+    .withMessage("პაროლი აუცილებელია"),
+  body("repeat_password").custom(async (value, { req }) => {
+    if (value != req.body?.password)
+      return Promise.reject("პაროლი უნდა დაემთხვეს");
+  }),
+  passwordRecovery
+);
+
+router.get('/recover-password/check', async (req,res) => {
+  const codeExists = await pool.query('Select * from password_resets where code = $1',[req.query.code])
+
+  if (codeExists?.rows?.[0]) {
+    res.status(200).json({
+      status:"success"
+    })
+  } else {
+    res.status(200).json({
+      errors:{
+        message:"მითითებული აღდგენა არ არსებობს"
+      }
+    })
+  }
+})
 
 router.get("/physical/:id", protect, getPhysicalCustomer);
 

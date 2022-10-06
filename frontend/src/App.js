@@ -15,6 +15,7 @@ import AddOrganizationType from "./components/admin/organizationTypes/AddOrganiz
 import EditOrgnizationType from './components/admin/organizationTypes/EditOrganizationType';
 import UserLogin from "./components/userLogin/UserLogin";
 import {UserContextProvider} from './components/contexts/userContext/userContext'
+import UserPasswordRecovery from "./components/userLogin/UserPasswordRecovery";
 function App() {
   return (
     <Router>
@@ -24,6 +25,7 @@ function App() {
             <UserContextProvider>
             <Routes>
               <Route path="/admin/login" element={<Login />} />
+
 
               <Route path="/admin" element={<AdminRoute />}>
                 {/* Country routes */}
@@ -73,6 +75,7 @@ function App() {
                 
               </Route>
               <Route path="/login" element={<UserLogin/>}/>
+              <Route path="/recover-password/:code" element={<UserPasswordRecovery/>}/>
             </Routes>
             </UserContextProvider>
           </AdminContextProvider>

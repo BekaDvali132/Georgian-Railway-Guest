@@ -74,6 +74,7 @@ CREATE TABLE verification_codes(
 CREATE TABLE password_resets(
     id SERIAL PRIMARY KEY,
     code text NOT NULL,
-    email text,
+    email text NOT NULL,
+    customer_type text NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

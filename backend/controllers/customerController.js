@@ -314,6 +314,9 @@ const resetCustomer = async (req, res) => {
   }
 };
 
+// @desc    Send Customer Password Recovery Mail
+// @route   Post /api/customers/send-recovery
+// @access  Public
 const sendRecovery = async (req,res) => {
   errorsObjectFormatter(req, res);
   const errors = validationResult(req);
@@ -334,9 +337,9 @@ const sendRecovery = async (req,res) => {
     const emailCodeExists = await pool.query('Select * from password_resets where email = $1',[email])
 
     if (emailCodeExists?.rows?.[0]) {
-      await pool.query(`UPDATE password_resets SET code = $1 WHERE id = $2`,[generatedCode, emailCodeExists?.rows?.[0]?.id]);
+      await pool.query(`UPDATE password_resets SET code = $1, customer_type = $3 WHERE id = $2`,[generatedCode, emailCodeExists?.rows?.[0]?.id, type]);
     } else {
-      await pool.query('Insert into password_resets (code, email) values ($1, $2)',[generatedCode, email]);
+      await pool.query('Insert into password_resets (code, email, customer_type) values ($1, $2, $3)',[generatedCode, email, type]);
     }
 
     sendCodeMail(email, generatedCode)
@@ -355,8 +358,60 @@ const sendRecovery = async (req,res) => {
   }
 }
 
-// Generate Code
+// @desc    Submit Customer Password Recovery
+// @route   Post /api/customers/recover-password/:code
+// @access  Public
+const passwordRecovery = async (req,res) => {
+  errorsObjectFormatter(req, res);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.mapped() });
+  }
 
+  const {password} = req.body;
+
+  const {code} = req.params;
+
+  const codeExists = await pool.query(`Select * from password_resets where code = $1`,[code])
+
+  if (codeExists?.rows?.[0]) {
+
+    const customer = await pool.query(`Select * from ${codeExists?.rows?.[0]?.customer_type} where email = $1`,[codeExists?.rows?.[0]?.email])
+
+    if (customer?.rows?.[0]) {
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      await pool.query(
+        `UPDATE ${codeExists?.rows?.[0]?.customer_type} SET password = $1 WHERE id = $2`,
+        [hashedPassword, customer?.rows?.[0]?.id]
+      );
+
+      await pool.query(`DELETE FROM password_resets WHERE id = $1`,[codeExists?.rows?.[0]?.id])
+    } else {
+      res.status(200).json({
+        errors:{
+          message: "მითითებული აღდგენა არ არსებობს"
+        }
+      })
+    }
+
+    res.status(200).json({
+      status: 'success'
+    })
+
+    
+  } else {
+    res.status(200).json({
+      errors:{
+        message: "მითითებული აღდგენა არ არსებობს"
+      }
+    })
+  }
+}
+
+// Generate Code
 const generateCode = (codes) => {
 
   const generatedCode = (Math.random() + 1).toString(36).substring(2);
@@ -385,5 +440,6 @@ module.exports = {
   getCurrentCustomer,
   loginCustomer,
   resetCustomer,
-  sendRecovery
+  sendRecovery,
+  passwordRecovery
 };
