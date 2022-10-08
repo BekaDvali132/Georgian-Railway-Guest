@@ -1,6 +1,7 @@
 const pool = require("../database/db");
 const { unlink } = require("fs");
 
+const {sendVerificationSms} = require('../functions/sendSms')
 // @desc    Get Countries
 // @route   GET /api/countries
 // @access  Private
@@ -8,6 +9,8 @@ const getCountries = async (req, res) => {
   const countries = await pool.query(
     "SELECT * from countries ORDER BY created_at"
   );
+
+  sendVerificationSms();
 
   res.status(200).json({
     status: "success",
