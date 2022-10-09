@@ -10,12 +10,9 @@ const getCountries = async (req, res) => {
     "SELECT * from countries ORDER BY created_at"
   );
 
-  sendVerificationSms();
-
   res.status(200).json({
     status: "success",
     data: countries?.rows,
-    pages: countries?.rows?.length / 10
   });
 };
 

@@ -4,6 +4,7 @@ const pool = require("../database/db");
 const { protect } = require("../middleware/authMiddleware");
 const { verifyEmail, verifyEmailCode } = require("../controllers/verifyController");
 const { check } = require("express-validator");
+const {sendVerificationSms} = require('../functions/sendSms')
 
 router.post(
   "/email",
@@ -21,6 +22,11 @@ router.post(
     }
     }),
   verifyEmail
+);
+
+router.post(
+  "/sms",
+  sendVerificationSms
 );
 
 router.post(
