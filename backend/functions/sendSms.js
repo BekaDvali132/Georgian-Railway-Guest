@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const sendVerificationSms = async (req,res,next) => {
+const sendSms = async (phone_number, text) => {
   
     try {
       const data = await axios.request({url:"/auth/token", baseURL:"https://api.softgen.ge", method:"post", data:{
@@ -16,26 +16,24 @@ const sendVerificationSms = async (req,res,next) => {
           token: data?.accessToken,
           messages: [
               {
-                  phone: "599505906",
-                  text: "sms"
+                  phone: phone_number,
+                  text: text
               }
           ]
       }).then(resp => {
           if(resp?.data?.[0]?.id){
-            res.json({
-              status:'success'
-            })
+            return 'success'
           }
       })
       } else {
-        res.json({status:'fail'})
+        return false
       }
     }
     catch (err) {
-      res.json({status:'fail'})
+      return false
     }
 }
 
 module.exports = {
-    sendVerificationSms
+  sendSms
 }
