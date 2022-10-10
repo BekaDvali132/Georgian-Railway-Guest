@@ -91,7 +91,8 @@ function AddPhysicalCustomer() {
   }, [verifyCount]);
 
   const submitCode = () => {
-    axios
+    if (form.getFieldValue("verification_method") == 2) {
+      axios
       .post("/api/verify/check-sms", {
         phone_number: form.getFieldValue("phone_number"),
         code: verifyForm.getFieldValue("code"),
@@ -107,6 +108,25 @@ function AddPhysicalCustomer() {
           setErrors(res?.data?.errors);
         }
       });
+    } else {
+      axios
+      .post("/api/verify/check-email", {
+        email: form.getFieldValue("email"),
+        code: verifyForm.getFieldValue("code"),
+      })
+      .then((res) => {
+        if (res?.data?.status === "success") {
+          setOpen(false);
+          setIsVerified(true);
+          setVerifyCount(0);
+          setErrors(null);
+          verifyForm.resetFields();
+        } else {
+          setErrors(res?.data?.errors);
+        }
+      });
+    }
+    
   };
 
   return (

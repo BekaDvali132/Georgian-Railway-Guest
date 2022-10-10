@@ -1,7 +1,7 @@
 import { Form, Input } from "antd";
 import { useState } from "react";
 
-function FormatedNumberInput({name, label, errorMessage, style, form}) {
+function FormatedNumberInput({name, label, errorMessage, style, form, setVerify=null}) {
   const re = /^[0-9\b]+$/;
   const [value, setValue] = useState("");
   return (
@@ -21,6 +21,7 @@ function FormatedNumberInput({name, label, errorMessage, style, form}) {
           setValue(value)
           form && form.setFieldValue(name,value)
         }
+        {setVerify && setVerify(false)}
       }}
       value={value}
     />
