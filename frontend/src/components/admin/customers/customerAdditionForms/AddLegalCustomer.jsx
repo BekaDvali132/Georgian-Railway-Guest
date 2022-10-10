@@ -16,10 +16,12 @@ function AddPhysicalCustomer() {
   const [verifyForm] = Form.useForm();
   const [errors, setErrors] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [verifyCount, setVerifyCount] = useState(0);
+  const [verifyPhoneCount, setVerifyPhoneCount] = useState(0);
+  const [verifyEmailCount, setVerifyEmailCount] = useState(0);
   const [verifyType, setVerifyType] = useState(1);
   const recaptchaRef = useRef();
 
@@ -35,7 +37,7 @@ function AddPhysicalCustomer() {
 
   const onFinish = (values) => {
     setIsLoading(true);
-    values.verification = isVerified === true ? isVerified : null;
+    values.verification = (isPhoneVerified === true && isEmailVerified === true) ? true : null;
     values.recaptcha = recaptchaRef.current.getValue();
 
     axios.post("/api/customers/legal", values).then((res) => {
@@ -48,59 +50,43 @@ function AddPhysicalCustomer() {
     });
   };
 
-  const sendCode = (method) => {
-    setVerifyType(method);
-    if (method == 1) {
-      axios
-        .post("/api/verify/email", { email: form.getFieldValue("email") })
-        .then((res) => {
-          if (res?.data.status == "success") {
-            setVerifyCount(30);
-            setOpen(true);
-          } else {
-            setErrors(res?.data?.errors);
-          }
-        });
-    } else {
-      axios
+  const sendSmsCode = () => {
+    axios
         .post("/api/verify/sms", {
           phone_number: form.getFieldValue("phone_number"),
         })
         .then((res) => {
           if (res?.data.status == "success") {
-            setVerifyCount(30);
+            form.setFieldValue('verification_method',1)
+            setVerifyPhoneCount(30);
             setOpen(true);
           } else {
             setErrors(res?.data?.errors);
           }
         });
-    }
-  };
+  }
 
-  useEffect(() => {
-    verifyCount > 0 && setTimeout(() => setVerifyCount(verifyCount - 1), 1000);
-  }, [verifyCount]);
-
-  const submitCode = () => {
-    if (verifyType === 1) {
+  const sendEmailCode = () => {
       axios
-        .post("/api/verify/check-email", {
-          email: form.getFieldValue("email"),
-          code: verifyForm.getFieldValue("code"),
-        })
+        .post("/api/verify/email", { email: form.getFieldValue("email") })
         .then((res) => {
-          if (res?.data?.status === "success") {
-            setOpen(false);
-            setIsVerified(true);
-            setVerifyCount(0);
-            setErrors(null);
-            verifyForm.resetFields();
-            setVerifyType(0)
+          if (res?.data.status == "success") {
+            form.setFieldValue('verification_method',2)
+            setVerifyEmailCount(30);
+            setOpen(true);
           } else {
             setErrors(res?.data?.errors);
           }
         });
-    } else if(verifyType === 2) {
+  };
+
+  useEffect(() => {
+    verifyPhoneCount > 0 && setTimeout(() => setVerifyPhoneCount(verifyPhoneCount - 1), 1000);
+    verifyEmailCount > 0 && setTimeout(() => setVerifyEmailCount(verifyEmailCount - 1), 1000);
+  }, [verifyEmailCount,verifyPhoneCount]);
+
+  const submitCode = () => {
+    if (form.getFieldValue('verification_method') === 1 && !isPhoneVerified) {
       axios
         .post("/api/verify/check-sms", {
           phone_number: form.getFieldValue("phone_number"),
@@ -109,8 +95,25 @@ function AddPhysicalCustomer() {
         .then((res) => {
           if (res?.data?.status === "success") {
             setOpen(false);
-            setIsVerified(true);
-            setVerifyCount(0);
+            setIsPhoneVerified(true);
+            setVerifyPhoneCount(0);
+            setErrors(null);
+            verifyForm.resetFields();
+          } else {
+            setErrors(res?.data?.errors);
+          }
+        });
+    } else if(form.getFieldValue('verification_method') === 2 && !isEmailVerified) {
+      axios
+        .post("/api/verify/check-email", {
+          email: form.getFieldValue("email"),
+          code: verifyForm.getFieldValue("code"),
+        })
+        .then((res) => {
+          if (res?.data?.status === "success") {
+            setOpen(false);
+            setIsEmailVerified(true);
+            setVerifyEmailCount(0);
             setErrors(null);
             verifyForm.resetFields();
             setVerifyType(0)
@@ -144,22 +147,22 @@ function AddPhysicalCustomer() {
               <Button
                 type="link"
                 htmlType="button"
-                disabled={isVerified}
-                loading={verifyCount > 0}
+                disabled={form.getFieldValue('verification_method') === 1 ? isPhoneVerified : isEmailVerified}
+                loading={form.getFieldValue('verification_method') === 1 ? verifyPhoneCount > 0 : verifyEmailCount > 0}
                 onClick={() =>
-                  sendCode(verifyType)
+                  form.getFieldValue('verification_method') === 1 ? sendSmsCode() : sendEmailCode()
                 }
               >
-                {verifyCount > 0 && verifyCount}{" "}
+                {form.getFieldValue('verification_method') === 1 ? verifyPhoneCount > 0 && verifyPhoneCount : verifyEmailCount > 0 && verifyEmailCount}{" "}
                 {translations["ka"]["send_code_again"]}
               </Button>
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={isVerified}
+                disabled={form.getFieldValue('verification_method') === 1 ? isPhoneVerified : isEmailVerified}
                 style={{ marginLeft: "auto" }}
                 onClick={() =>
-                  submitCode(verifyType)
+                  submitCode()
                 }
               >
                 {translations["ka"]["confirm"]}
@@ -252,16 +255,18 @@ function AddPhysicalCustomer() {
           name={"phone_number"}
           label={translations["ka"]["phone_number"] + "*"}
           errorMessage={errors?.phone_number}
+          setVerify={setIsPhoneVerified}
         />
         <Button
           type="link"
           htmlType="button"
           onClick={() => {
-            sendCode(2);
+            sendSmsCode();
           }}
-          loading={verifyCount > 0}
+          disabled={isPhoneVerified}
+          loading={verifyPhoneCount > 0}
         >
-          {verifyCount > 0 && verifyCount} {translations["ka"]["send_code"]}
+          {verifyPhoneCount > 0 && verifyPhoneCount} {translations["ka"]["send_code"]}
         </Button>
       </Space>
 
@@ -273,19 +278,19 @@ function AddPhysicalCustomer() {
       >
         <Space>
           <Input
-            onChange={() => setIsVerified(false)}
+            onChange={() => setIsEmailVerified(false)}
             style={{ width: "300px" }}
           />
           <Button
             type="link"
             htmlType="button"
-            disabled={isVerified}
+            disabled={isEmailVerified}
             onClick={() => {
-              sendCode(1);
+              sendEmailCode();
             }}
-            loading={verifyCount > 0}
+            loading={verifyEmailCount > 0}
           >
-            {verifyCount > 0 && verifyCount} {translations["ka"]["send_code"]}
+            {verifyEmailCount > 0 && verifyEmailCount} {translations["ka"]["send_code"]}
           </Button>
         </Space>
       </Form.Item>
