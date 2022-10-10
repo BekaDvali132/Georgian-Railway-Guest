@@ -105,4 +105,37 @@ const verifyEmailCode = async (req, res) => {
     }
 }
 
-module.exports = { verifyEmail, verifyEmailCode, verifyPhone };
+// @desc    Verify Phone Code
+// @route   POST /api/verify/sms-check
+// @access  Public
+const verifyPhoneCode = async (req, res) => {
+
+  errorsObjectFormatter(req, res);
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.mapped() });
+  }
+
+  const { code, phone_number } = req.body;
+
+  const savedCode = await pool.query("Select * from verification_codes where code = $1 AND phone_number = $2",[code, phone_number])
+
+  if (savedCode?.rows?.[0]) {
+      res.status(200).json({
+          status: "success",
+          // data: moment().isBetween(moment(savedCode.rows[0].created_at), moment(savedCode.rows[0].valid_until))
+        });
+
+      await pool.query('DELETE FROM verification_codes WHERE id = $1',[savedCode?.rows[0].id])
+
+  } else {
+      res.status(200).json({
+          errors:{
+              code:'კოდი არასწორია'
+          }
+      })
+  }
+}
+
+module.exports = { verifyEmail, verifyEmailCode, verifyPhone, verifyPhoneCode };

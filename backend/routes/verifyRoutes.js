@@ -6,6 +6,7 @@ const {
   verifyEmail,
   verifyEmailCode,
   verifyPhone,
+  verifyPhoneCode
 } = require("../controllers/verifyController");
 const { check } = require("express-validator");
 
@@ -38,7 +39,7 @@ router.post(
     .isMobilePhone()
     .withMessage("ტელეფონის ნომერი არასწორი ფორმატითაა მითითებული")
     .custom(async (value) => {
-      const phoneExists = await pool.query('Select * from physical_customers where phone_number = $1 union select email from legal_customers where phone_number = $1', [value]);
+      const phoneExists = await pool.query('Select phone_number from physical_customers where phone_number = $1 union select phone_number from legal_customers where phone_number = $1', [value]);
 
       if (phoneExists?.rows?.[0]) {
         return Promise.reject("ტელეფონის ნომერი დაკავებულია");
@@ -69,6 +70,30 @@ router.post(
     .isEmail()
     .withMessage("ელ.ფოსტა არასწორი ფორმატითაა მითითებული"),
   verifyEmailCode
+);
+
+router.post(
+  "/check-sms",
+  protect,
+  check("code")
+    .notEmpty()
+    .withMessage("სავერიფიკაციო კოდი აუცილებელია")
+    .custom(async (value) => {
+      const savedCode = await pool.query(
+        "Select * from verification_codes where code = $1",
+        [value]
+      );
+
+      if (!savedCode?.rows?.[0]) {
+        return Promise.reject("მითითებული კოდი არასწორია");
+      }
+    }),
+  check("phone_number")
+    .notEmpty()
+    .withMessage("ტელეფონის ნომერი აუცილებელია")
+    .isMobilePhone()
+    .withMessage("ტელეფონის ნომერი არასწორი ფორმატითაა მითითებული"),
+    verifyPhoneCode
 );
 
 module.exports = router;

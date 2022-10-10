@@ -73,6 +73,16 @@ function AddPhysicalCustomer() {
           }
         });
     } else {
+      axios
+        .post("/api/verify/sms", { phone_number: form.getFieldValue("phone_number") })
+        .then((res) => {
+          if (res?.data.status == "success") {
+            setVerifyCount(30);
+            setOpen(true);
+          } else {
+            setErrors(res?.data?.errors);
+          }
+        });
     }
   };
 
@@ -82,8 +92,8 @@ function AddPhysicalCustomer() {
 
   const submitCode = () => {
     axios
-      .post("/api/verify/check-email", {
-        email: form.getFieldValue("email"),
+      .post("/api/verify/check-sms", {
+        phone_number: form.getFieldValue("phone_number"),
         code: verifyForm.getFieldValue("code"),
       })
       .then((res) => {

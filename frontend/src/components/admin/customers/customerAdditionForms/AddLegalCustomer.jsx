@@ -20,6 +20,7 @@ function AddPhysicalCustomer() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [verifyCount, setVerifyCount] = useState(0);
+  const [verifyType, setVerifyType] = useState(1);
   const recaptchaRef = useRef();
 
   const getFormOptions = () => {
@@ -33,21 +34,22 @@ function AddPhysicalCustomer() {
   useEffect(() => getFormOptions(), []);
 
   const onFinish = (values) => {
-      setIsLoading(true);
-      values.verification = isVerified === true ? isVerified : null;
-      values.recaptcha = recaptchaRef.current.getValue();
+    setIsLoading(true);
+    values.verification = isVerified === true ? isVerified : null;
+    values.recaptcha = recaptchaRef.current.getValue();
 
-      axios.post("/api/customers/legal", values).then((res) => {
-        if (res?.data?.status === "success") {
-          navigate("/admin/customers");
-        } else {
-          setErrors(res?.data?.errors);
-        }
-        setIsLoading(false);
-      });
+    axios.post("/api/customers/legal", values).then((res) => {
+      if (res?.data?.status === "success") {
+        navigate("/admin/customers");
+      } else {
+        setErrors(res?.data?.errors);
+      }
+      setIsLoading(false);
+    });
   };
 
   const sendCode = (method) => {
+    setVerifyType(method);
     if (method == 1) {
       axios
         .post("/api/verify/email", { email: form.getFieldValue("email") })
@@ -60,6 +62,18 @@ function AddPhysicalCustomer() {
           }
         });
     } else {
+      axios
+        .post("/api/verify/sms", {
+          phone_number: form.getFieldValue("phone_number"),
+        })
+        .then((res) => {
+          if (res?.data.status == "success") {
+            setVerifyCount(30);
+            setOpen(true);
+          } else {
+            setErrors(res?.data?.errors);
+          }
+        });
     }
   };
 
@@ -68,25 +82,45 @@ function AddPhysicalCustomer() {
   }, [verifyCount]);
 
   const submitCode = () => {
-    axios
-      .post("/api/verify/check-email", {
-        email: form.getFieldValue("email"),
-        code: verifyForm.getFieldValue("code"),
-      })
-      .then((res) => {
-        if (res?.data?.status === "success") {
-          setOpen(false);
-          setIsVerified(true);
-          setVerifyCount(0);
-          setErrors(null);
-          verifyForm.resetFields();
-        } else {
-          setErrors(res?.data?.errors);
-        }
-      });
-  };
+    if (verifyType === 1) {
+      axios
+        .post("/api/verify/check-email", {
+          email: form.getFieldValue("email"),
+          code: verifyForm.getFieldValue("code"),
+        })
+        .then((res) => {
+          if (res?.data?.status === "success") {
+            setOpen(false);
+            setIsVerified(true);
+            setVerifyCount(0);
+            setErrors(null);
+            verifyForm.resetFields();
+            setVerifyType(0)
+          } else {
+            setErrors(res?.data?.errors);
+          }
+        });
+    } else if(verifyType === 2) {
+      axios
+        .post("/api/verify/check-sms", {
+          phone_number: form.getFieldValue("phone_number"),
+          code: verifyForm.getFieldValue("code"),
+        })
+        .then((res) => {
+          if (res?.data?.status === "success") {
+            setOpen(false);
+            setIsVerified(true);
+            setVerifyCount(0);
+            setErrors(null);
+            verifyForm.resetFields();
+            setVerifyType(0)
+          } else {
+            setErrors(res?.data?.errors);
+          }
+        });
+    }
 
-  const sendSmsCode = () => {};
+  };
 
   return (
     <Form layout="vertical" form={form} onFinish={onFinish}>
@@ -113,7 +147,7 @@ function AddPhysicalCustomer() {
                 disabled={isVerified}
                 loading={verifyCount > 0}
                 onClick={() =>
-                  sendCode(form.getFieldValue("verification_method"))
+                  sendCode(verifyType)
                 }
               >
                 {verifyCount > 0 && verifyCount}{" "}
@@ -124,6 +158,9 @@ function AddPhysicalCustomer() {
                 htmlType="submit"
                 disabled={isVerified}
                 style={{ marginLeft: "auto" }}
+                onClick={() =>
+                  submitCode(verifyType)
+                }
               >
                 {translations["ka"]["confirm"]}
               </Button>
@@ -220,10 +257,11 @@ function AddPhysicalCustomer() {
           type="link"
           htmlType="button"
           onClick={() => {
-            sendSmsCode();
+            sendCode(2);
           }}
+          loading={verifyCount > 0}
         >
-          {translations["ka"]["send_code"]}
+          {verifyCount > 0 && verifyCount} {translations["ka"]["send_code"]}
         </Button>
       </Space>
 
